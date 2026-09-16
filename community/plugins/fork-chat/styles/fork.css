@@ -19,7 +19,7 @@ button[data-fork-chat-btn],
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
-  color: var(--muted-foreground, #94a3b8) !important;
+  color: var(--secondary-foreground, #94a3b8) !important;
   cursor: pointer !important;
   transition: background-color 120ms ease, color 120ms ease, transform 100ms ease !important;
 }
