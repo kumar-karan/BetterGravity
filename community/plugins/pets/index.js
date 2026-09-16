@@ -3637,10 +3637,10 @@ async function createPet() {
     if (!plugin.pets) throw new Error("Restart Antigravity to activate pet creation.");
     await plugin.pets.prepareCreation();
     if (libraryDisposed || (creationPage && libraryPage !== creationPage)) return;
-    if (!(await newConversation(true))) throw new Error("The new conversation could not be opened.");
+    if (!(await newConversation(true, true))) throw new Error("The new conversation could not be opened.");
     libraryHref = location.href;
     const expected = currentId();
-    const current = () => !libraryDisposed && (!creationPage || libraryPage === creationPage) && currentId() === expected && projectlessHome();
+    const current = () => !libraryDisposed && (!creationPage || libraryPage === creationPage) && currentId() === expected && projectlessHome(true);
     const field = await waitForComposer(current);
     if (!field || !current()) throw new Error("The new conversation is no longer selected.");
     const draft = "value" in field ? field.value : field.textContent;
@@ -5460,10 +5460,11 @@ const refusing = (element) =>
 /** How long to give the workbench to swap a view in, or to enable a button. */
 const HOST_WAIT_MS = 1500;
 
-const projectlessHome = () => {
+const projectlessHome = (allowWorkspace = false) => {
   const section = new URLSearchParams(location.search).get("section");
-  return currentId() === "" && location.pathname === "/" &&
-    (section === null || section === "outside-of-project");
+  const onHome = location.pathname === "/" || !location.pathname.startsWith("/c/");
+  const isProjectless = section === null || section === "outside-of-project";
+  return currentId() === "" && onHome && (allowWorkspace || isProjectless);
 };
 
 /**
@@ -5476,7 +5477,7 @@ const projectlessHome = () => {
  * anchor rather than assigning `location.href` is deliberate — the workbench
  * routes it, and a navigation would reload the window the plugin is running in.
  */
-async function newConversation(keepPetLibrary = false) {
+async function newConversation(keepPetLibrary = false, allowWorkspace = keepPetLibrary) {
   raise();
   const link = document.querySelector(NEW_CHAT);
   if (!(link instanceof HTMLElement)) {
@@ -5490,10 +5491,31 @@ async function newConversation(keepPetLibrary = false) {
   if (keepPetLibrary) Object.defineProperty(activation, "betterGravityKeepPetLibrary", { value: true });
   link.dispatchEvent(activation);
   const deadline = Date.now() + HOST_WAIT_MS;
-  while (!projectlessHome()) {
+  while (!projectlessHome(allowWorkspace)) {
     if (Date.now() >= deadline) {
-      plugin.log.warn("the new conversation did not open");
-      return false;
+      if (allowWorkspace) {
+        const router = findRouter();
+        if (router && typeof router.navigate === "function") {
+          try {
+            const section = new URLSearchParams(location.search).get("section");
+            router.navigate({ to: section ? `/?section=${section}` : "/" });
+          } catch {}
+        } else {
+          link.click();
+        }
+        const graceDeadline = Date.now() + 1500;
+        while (!projectlessHome(allowWorkspace)) {
+          if (Date.now() >= graceDeadline) {
+            plugin.log.warn("the new conversation did not open");
+            return false;
+          }
+          await tick();
+        }
+      } else {
+        plugin.log.warn("the new conversation did not open");
+        return false;
+      }
+      break;
     }
     await tick();
   }

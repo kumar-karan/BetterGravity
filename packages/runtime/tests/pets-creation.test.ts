@@ -118,6 +118,32 @@ describe("Hatch Pet creation flow", () => {
     expect(document.querySelector("main")!.inert).toBe(false);
   });
 
+  it("prefills a new chat inside a project workspace with ?section=workspace-uuid", async () => {
+    history.replaceState(null, "", "/c/previous?section=workspace-uuid");
+    const link = document.querySelector("a")!;
+    const replacement = link.cloneNode(true) as HTMLAnchorElement;
+    link.replaceWith(replacement);
+    replacement.addEventListener("click", event => {
+      event.preventDefault();
+      openCount++;
+      history.replaceState(null, "", "/?section=workspace-uuid");
+      composer("conversation", draftInNewChat);
+    });
+
+    plugin.openPetLibrary();
+    const creating = plugin.createPet();
+    await vi.advanceTimersByTimeAsync(300);
+    await creating;
+    expect(openCount).toBe(1);
+    expect(location.pathname).toBe("/");
+    expect(location.search).toBe("?section=workspace-uuid");
+    const text = document.querySelector("textarea")!.value;
+    expect(text).toContain("hatch-pet");
+    expect(text).toContain("create a pet based on what you know about me");
+    expect(sent).toEqual([]);
+    expect(document.querySelector("#bettergravity-pets-view")).toBeNull();
+  });
+
   it("preserves a draft already present in the new conversation", async () => {
     draftInNewChat = "Keep this draft.";
     plugin.openPetLibrary();

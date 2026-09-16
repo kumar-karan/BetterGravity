@@ -72,6 +72,20 @@ button[data-fork-chat-btn] {
   display: none !important;
 }
 
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn]::before,
+button[data-fork-chat-btn]::before {
+  content: none !important;
+  display: none !important;
+}
+
+button[data-fork-chat-btn] svg,
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn] svg {
+  width: 15px !important;
+  height: 15px !important;
+  display: block !important;
+  fill: currentColor !important;
+  pointer-events: none !important;
+}
 /* ── Titlebar Action Button ─────────────────────────────────────────────── */
 button[data-fork-titlebar-btn] {
   display: inline-flex;

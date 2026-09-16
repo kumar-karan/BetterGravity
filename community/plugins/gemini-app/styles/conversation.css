@@ -1660,7 +1660,7 @@ div:has(> .flex.items-center.whitespace-nowrap.overflow-hidden.min-w-0):not(:has
 }
 
 /* Render Willow's Luminous Symbols glyphs via ::before */
-[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button:is([aria-label="Good response"], [aria-label="Bad response"], [aria-label="Copy"], [aria-label="Copied"], [data-fork-chat-btn])::before {
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button:is([aria-label="Good response"], [aria-label="Bad response"], [aria-label="Copy"], [aria-label="Copied"])::before {
   font-family: var(--gemini-icon-font) !important;
   font-size: 20px !important;
   line-height: 20px !important;
@@ -1691,10 +1691,6 @@ div:has(> .flex.items-center.whitespace-nowrap.overflow-hidden.min-w-0):not(:has
 
 [data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button:is([aria-label="Copied"])::before {
   content: "check" !important;
-}
-
-[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn]::before {
-  content: "arrow_split" !important;
 }
 
 /* Position completion timestamp immediately NEXT TO buttons on the left (order: 2) */
