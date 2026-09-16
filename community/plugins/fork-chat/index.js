@@ -4,13 +4,13 @@
 // into a new branch or workspace, matching Codex and Claude Code.
 
 const FORK_ICON_PATH = "M200-440q-17 0-28.5-11.5T160-480q0-17 11.5-28.5T200-520h264l200-200h-64q-17 0-28.5-11.5T560-760q0-17 11.5-28.5T600-800h160q17 0 28.5 11.5T800-760v160q0 17-11.5 28.5T760-560q-17 0-28.5-11.5T720-600v-64L519-463q-11 11-25.5 17t-30.5 6H200Zm400 280q-17 0-28.5-11.5T560-200q0-17 11.5-28.5T600-240h64l-99-98q-12-12-12-28.5t12-28.5q12-12 29-12t29 12l97 99v-64q0-17 11.5-28.5T760-400q17 0 28.5 11.5T800-360v160q0 17-11.5 28.5T760-160H600Z";
-const FORK_ICON_SVG = `<svg viewBox="0 -960 960 960" fill="currentColor"><path d="${FORK_ICON_PATH}"/></svg>`;
+const FORK_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4"><path d="M5 3.254V3.25a2.25 2.25 0 1 1 3.557 1.834L10.5 7.028a2.25 2.25 0 1 1-.884.884L7.674 5.97A2.25 2.25 0 0 1 5 3.254Zm0 6.5a2.25 2.25 0 1 0 1.5 2.121V6.874a3.75 3.75 0 0 1-1.5-.749v3.629Zm5.5-2.254a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM6.25 3.25a1 1 0 1 0-2 0 1 1 0 0 0 2 0Zm-1 8.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>`;
 const WORKSPACE_ICON_SVG = '<svg viewBox="0 -960 960 960" fill="currentColor"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>';
 const BRANCH_ICON_SVG = FORK_ICON_SVG;
 const COPY_ICON_SVG = '<svg viewBox="0 -960 960 960" fill="currentColor"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>';
 const COPY_MENU_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" class="text-secondary-foreground shrink-0"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>';
 const WORKSPACE_MENU_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" class="text-secondary-foreground shrink-0"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>';
-const BRANCH_MENU_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 -960 960 960" fill="currentColor" class="text-secondary-foreground shrink-0"><path d="${FORK_ICON_PATH}"/></svg>`;
+const BRANCH_MENU_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" class="text-secondary-foreground shrink-0"><path d="M5 3.254V3.25a2.25 2.25 0 1 1 3.557 1.834L10.5 7.028a2.25 2.25 0 1 1-.884.884L7.674 5.97A2.25 2.25 0 0 1 5 3.254Zm0 6.5a2.25 2.25 0 1 0 1.5 2.121V6.874a3.75 3.75 0 0 1-1.5-.749v3.629Zm5.5-2.254a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM6.25 3.25a1 1 0 1 0-2 0 1 1 0 0 0 2 0Zm-1 8.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>`;
 const CHEVRON_RIGHT_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor"><path d="M517.85-480l-184-184L376-706.15L602.15-480L376-253.85L333.85-296l184-184Z"/></svg>';
 
 /* ── Settings ────────────────────────────────────────────────────────────── */
@@ -714,7 +714,7 @@ function decorateTurnBar(bar) {
 
   const button = document.createElement("button");
   button.type = "button";
-  button.className = "bettergravity-fork-turn-btn";
+  button.className = "inline-flex items-center font-medium transition-colors select-none outline-none cursor-pointer justify-center disabled:opacity-50 bg-transparent text-muted-foreground hover:text-foreground hover:bg-secondary focus-visible:text-foreground focus-visible:bg-secondary h-6 w-6 shrink-0 rounded-md bettergravity-fork-turn-btn";
   button.setAttribute("data-fork-chat-btn", "true");
   button.setAttribute("aria-label", "Fork from this response");
   button.title = "Fork conversation from this response";
