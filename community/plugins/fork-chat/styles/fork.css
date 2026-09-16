@@ -1,31 +1,41 @@
 /* Fork Chat Plugin Styles */
 
 /* ── Turn Action Button ─────────────────────────────────────────────────── */
-button[data-fork-chat-btn] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--muted-foreground, #94a3b8);
-  transition: background-color 120ms ease, color 120ms ease, transform 100ms ease;
-  padding: 0;
-  outline: none;
-  box-shadow: none;
+button[data-fork-chat-btn],
+[data-testid="conversation-view"] div.flex.w-full.items-start button[data-fork-chat-btn],
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn] {
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: var(--muted-foreground, #94a3b8) !important;
+  cursor: pointer !important;
+  transition: background-color 120ms ease, color 120ms ease, transform 100ms ease !important;
 }
 
-button[data-fork-chat-btn]:hover {
-  background-color: var(--gemini-row-hover, rgba(230, 230, 230, 0.08)) !important;
+button[data-fork-chat-btn]:hover,
+[data-testid="conversation-view"] div.flex.w-full.items-start button[data-fork-chat-btn]:hover,
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn]:hover {
+  background-color: var(--secondary, rgba(255, 255, 255, 0.08)) !important;
   color: var(--foreground, #f8fafc) !important;
 }
 
-button[data-fork-chat-btn]:active {
+button[data-fork-chat-btn]:active,
+[data-testid="conversation-view"] div.flex.w-full.items-start button[data-fork-chat-btn]:active,
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn]:active {
   background-color: var(--gemini-row-pressed, rgba(230, 230, 230, 0.12)) !important;
-  transform: scale(0.92);
+  transform: scale(0.92) !important;
 }
 
 button[data-fork-chat-btn]:focus,
@@ -36,11 +46,14 @@ button[data-fork-chat-btn]:focus-visible {
   outline: none !important;
 }
 
-button[data-fork-chat-btn] svg {
-  width: 15px;
-  height: 15px;
-  fill: currentColor;
-  pointer-events: none;
+button[data-fork-chat-btn] svg,
+[data-testid="conversation-view"] div.flex.w-full.items-start button[data-fork-chat-btn] svg,
+[data-testid="conversation-view"] div.flex.w-full.items-start[data-gemini-turn-actions="true"] button[data-fork-chat-btn] svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: block !important;
+  fill: currentColor !important;
+  pointer-events: none !important;
 }
 
 /* ── Turn Action Bar Ordering & Native Cleanups ─────────────────────────── */
