@@ -511,14 +511,13 @@ describe.each([false, true])("Pets activity badge (desktop=%s)", (desktop) => {
     expect(pet.style.left).toBe(`${expectedLeft}px`);
   });
 
-  it("raises the app for a mascot click, but keeps dragging independent", () => {
+  it("pokes the mascot on click without stealing focus, keeping dragging independent", () => {
     mount([entry("working")], {}, desktop);
     move(true);
     pointer("pointerdown", 210, 210);
     pointer("pointerup", 210, 210, 0);
     expect(sent.filter(message => message.t === "poke")).toHaveLength(1);
-    expect(focusOwner).toHaveBeenCalledTimes(desktop ? 1 : 0);
-    focusOwner.mockClear();
+    expect(focusOwner).not.toHaveBeenCalled();
     pickUp();
     pointer("pointerup", 250, 210, 0);
     expect(sent.filter(message => message.t === "poke")).toHaveLength(1);
