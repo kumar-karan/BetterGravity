@@ -603,6 +603,7 @@ function petSurface(host, data) {
     force: "auto",
     sheet: "",
     activity: true,
+    accessory: "none",
     ...(data?.config ?? {})
   };
 
@@ -758,6 +759,8 @@ function petSurface(host, data) {
 
   const sprite = make("div", "bettergravity-pet__body", pet);
   sprite.setAttribute("aria-hidden", "true");
+  const accessory = make("div", "bettergravity-pet__accessory", pet);
+  accessory.setAttribute("aria-hidden", "true");
   const badge = make("button", "bettergravity-pet__badge", pet);
   badge.type = "button";
   badge.dataset.petHit = "badge";
@@ -1015,6 +1018,127 @@ function petSurface(host, data) {
     releaseSheetObjectUrl();
     if (image !== custom) sheetObjectUrl = image;
     void measureArtwork();
+  }
+
+  /* ── Hats & Accessories (Cosmetics Overlay) ───────────────────────────── */
+
+  const ACCESSORY_PARTY_HAT =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-party-grad" x1="0%" y1="100%" x2="100%" y2="0%">' +
+    '<stop offset="0%" stop-color="#ff4757"/>' +
+    '<stop offset="25%" stop-color="#ffa502"/>' +
+    '<stop offset="50%" stop-color="#2ed573"/>' +
+    '<stop offset="75%" stop-color="#1e90ff"/>' +
+    '<stop offset="100%" stop-color="#9b59b6"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 72 54 Q 96 57 120 54 L 98 12 Z" fill="url(#bg-pet-party-grad)" stroke="#1e272e" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M 77 44 Q 96 47 115 44" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.85"/>' +
+    '<path d="M 84 31 Q 97 33 109 31" stroke="#ffeaa7" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>' +
+    '<path d="M 91 20 Q 97 21 103 20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.85"/>' +
+    '<ellipse cx="96" cy="54" rx="24" ry="4" fill="#ffffff" stroke="#1e272e" stroke-width="1.5"/>' +
+    '<circle cx="98" cy="11" r="6" fill="#ffd32a" stroke="#1e272e" stroke-width="1.5"/>' +
+    '<circle cx="96" cy="9" r="2.5" fill="#ffffff" opacity="0.9"/>' +
+    '</svg>';
+
+  const ACCESSORY_SUNGLASSES =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<rect x="52" y="90" width="8" height="3" fill="#111111"/>' +
+    '<rect x="132" y="90" width="8" height="3" fill="#111111"/>' +
+    '<rect x="60" y="88" width="72" height="4" fill="#111111"/>' +
+    '<rect x="60" y="92" width="32" height="4" fill="#111111"/>' +
+    '<rect x="62" y="96" width="30" height="4" fill="#111111"/>' +
+    '<rect x="64" y="100" width="26" height="4" fill="#111111"/>' +
+    '<rect x="68" y="104" width="18" height="4" fill="#111111"/>' +
+    '<rect x="64" y="92" width="24" height="4" fill="#1e272e"/>' +
+    '<rect x="66" y="96" width="22" height="4" fill="#1e272e"/>' +
+    '<rect x="68" y="100" width="18" height="4" fill="#1e272e"/>' +
+    '<rect x="66" y="92" width="4" height="4" fill="#ffffff"/>' +
+    '<rect x="70" y="96" width="4" height="4" fill="#ffffff"/>' +
+    '<rect x="74" y="100" width="4" height="4" fill="#ffffff"/>' +
+    '<rect x="100" y="92" width="32" height="4" fill="#111111"/>' +
+    '<rect x="100" y="96" width="30" height="4" fill="#111111"/>' +
+    '<rect x="102" y="100" width="26" height="4" fill="#111111"/>' +
+    '<rect x="106" y="104" width="18" height="4" fill="#111111"/>' +
+    '<rect x="104" y="92" width="24" height="4" fill="#1e272e"/>' +
+    '<rect x="104" y="96" width="22" height="4" fill="#1e272e"/>' +
+    '<rect x="106" y="100" width="18" height="4" fill="#1e272e"/>' +
+    '<rect x="106" y="92" width="4" height="4" fill="#ffffff"/>' +
+    '<rect x="110" y="96" width="4" height="4" fill="#ffffff"/>' +
+    '<rect x="114" y="100" width="4" height="4" fill="#ffffff"/>' +
+    '</svg>';
+
+  const ACCESSORY_CROWN =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-crown-grad" x1="0%" y1="0%" x2="0%" y2="100%">' +
+    '<stop offset="0%" stop-color="#ffeaa7"/>' +
+    '<stop offset="50%" stop-color="#fdcb6e"/>' +
+    '<stop offset="100%" stop-color="#e17055"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 70 46 L 72 26 L 82 36 L 96 18 L 110 36 L 120 26 L 122 46 Z" fill="url(#bg-pet-crown-grad)" stroke="#b7791f" stroke-width="2" stroke-linejoin="round"/>' +
+    '<rect x="69" y="45" width="54" height="8" rx="2" fill="#f39c12" stroke="#b7791f" stroke-width="1.5"/>' +
+    '<circle cx="72" cy="26" r="3.5" fill="#ffffff" stroke="#b7791f" stroke-width="1.2"/>' +
+    '<circle cx="82" cy="36" r="2.5" fill="#ffffff" stroke="#b7791f" stroke-width="1"/>' +
+    '<circle cx="96" cy="18" r="4.5" fill="#ffffff" stroke="#b7791f" stroke-width="1.2"/>' +
+    '<circle cx="110" cy="36" r="2.5" fill="#ffffff" stroke="#b7791f" stroke-width="1"/>' +
+    '<circle cx="120" cy="26" r="3.5" fill="#ffffff" stroke="#b7791f" stroke-width="1.2"/>' +
+    '<circle cx="82" cy="49" r="2.5" fill="#2ecc71" stroke="#27ae60" stroke-width="0.8"/>' +
+    '<circle cx="96" cy="49" r="3" fill="#e74c3c" stroke="#c0392b" stroke-width="1"/>' +
+    '<circle cx="110" cy="49" r="2.5" fill="#0984e3" stroke="#096cb8" stroke-width="0.8"/>' +
+    '</svg>';
+
+  const ACCESSORY_WIZARD =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-wizard-grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#3867d6"/>' +
+    '<stop offset="60%" stop-color="#182C61"/>' +
+    '<stop offset="100%" stop-color="#0c1033"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 70 52 C 74 34 88 20 114 10 C 118 8 123 12 120 16 C 112 24 116 36 122 52 Z" fill="url(#bg-pet-wizard-grad)" stroke="#0c1033" stroke-width="2" stroke-linejoin="round"/>' +
+    '<ellipse cx="96" cy="54" rx="40" ry="7" fill="#182C61" stroke="#0c1033" stroke-width="2"/>' +
+    '<path d="M 74 51 Q 96 54 118 51" stroke="#f5cd79" stroke-width="3.5" fill="none"/>' +
+    '<path d="M 90 32 L 91.5 35 L 95 35 L 92 37 L 93 40 L 90 38 L 87 40 L 88 37 L 85 35 L 88.5 35 Z" fill="#f5cd79" stroke="#e5a038" stroke-width="0.5"/>' +
+    '<path d="M 104 22 L 105 24 L 107.5 24 L 105.5 25.5 L 106.5 28 L 104 26.5 L 101.5 28 L 102.5 25.5 L 100.5 24 L 103 24 Z" fill="#f5cd79" stroke="#e5a038" stroke-width="0.5"/>' +
+    '<circle cx="116" cy="12" r="2.5" fill="#ffd32a"/>' +
+    '</svg>';
+
+  const ACCESSORY_COFFEE =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-coffee-brew" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#6F4E37"/>' +
+    '<stop offset="100%" stop-color="#3B2219"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path class="bettergravity-pet__steam-1" d="M 144 122 Q 141 114 145 107 Q 149 100 144 92" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" fill="none"/>' +
+    '<path class="bettergravity-pet__steam-2" d="M 149 121 Q 153 113 149 106 Q 145 99 150 91" stroke="rgba(255,255,255,0.85)" stroke-width="2" stroke-linecap="round" fill="none"/>' +
+    '<path d="M 156 132 C 166 132 166 146 156 146" stroke="#2d3436" stroke-width="4.5" fill="none" stroke-linecap="round"/>' +
+    '<path d="M 156 132 C 164 132 164 146 156 146" stroke="#dfe6e9" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="136" y="128" width="22" height="22" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="2"/>' +
+    '<ellipse cx="147" cy="128" rx="9" ry="3" fill="url(#bg-pet-coffee-brew)"/>' +
+    '<path d="M 139 133 L 139 146" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>' +
+    '</svg>';
+
+  const ACCESSORIES = {
+    none: "",
+    party: ACCESSORY_PARTY_HAT,
+    sunglasses: ACCESSORY_SUNGLASSES,
+    crown: ACCESSORY_CROWN,
+    wizard: ACCESSORY_WIZARD,
+    coffee: ACCESSORY_COFFEE
+  };
+
+  function applyAccessory() {
+    const kind = config.accessory ?? "none";
+    pet.dataset.petAccessory = kind;
+    const markup = ACCESSORIES[kind] ?? "";
+    accessory.innerHTML = markup;
+    accessory.hidden = markup.length === 0;
   }
 
   /* ── Where it stands, and where the tray goes ───────────────────────────
@@ -3083,6 +3207,7 @@ function petSurface(host, data) {
           config = { ...config, ...message.config };
           if (config.size !== before.size) applySize();
           if (config.sheet !== before.sheet) applySheet();
+          if (config.accessory !== before.accessory) applyAccessory();
           if (config.roam !== before.roam) {
             cancelWander();
             scheduleWander();
@@ -3193,6 +3318,7 @@ function petSurface(host, data) {
     document.body.append(pet, tray, chat, petMenu);
     applySheet();
     applySize();
+    applyAccessory();
 
     // Where it was last left, or the bottom-right corner — Codex's own default
     // spot, and on the desktop that corner is the corner of the screen.
@@ -3502,6 +3628,20 @@ const settings = plugin.settings.define({
       { value: "45", label: "Every 45 minutes" },
       { value: "60", label: "Every 60 minutes" },
       { value: "off", label: "Off" }
+    ]
+  },
+  accessory: {
+    type: "select",
+    label: "Accessory / Hat",
+    description: "Equip your pet with a fun hat or accessory.",
+    default: "none",
+    options: [
+      { value: "none", label: "None" },
+      { value: "party", label: "🥳 Party Hat" },
+      { value: "sunglasses", label: "🕶️ Pixel Sunglasses" },
+      { value: "crown", label: "👑 Golden Crown" },
+      { value: "wizard", label: "🧙 Wizard Hat" },
+      { value: "coffee", label: "☕ Steaming Coffee" }
     ]
   },
   sheet: {
@@ -5811,7 +5951,8 @@ const configOf = () => ({
   bounce: settings.bounce === true,
   roam: settings.roam ?? "chill",
   waterReminder: settings.waterReminder ?? "45",
-  stretchReminder: settings.stretchReminder ?? "60"
+  stretchReminder: settings.stretchReminder ?? "60",
+  accessory: settings.accessory ?? "none"
 });
 
 /** Focus the host renderer after the desktop surface raises its native window. */
