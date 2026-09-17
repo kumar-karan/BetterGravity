@@ -44,8 +44,10 @@ try {
 
   const patcher = createRequire(import.meta.url)(bundle);
 
-  const operation = process.argv[2] ?? "inspect";
-  const installationPath = process.argv[3] ?? patcher.findAntigravityInstallation();
+  const noClose = process.argv.includes("--no-close");
+  const filteredArgs = process.argv.slice(2).filter((arg) => arg !== "--no-close");
+  const operation = filteredArgs[0] ?? "inspect";
+  const installationPath = filteredArgs[1] ?? patcher.findAntigravityInstallation();
 
   if (!installationPath) {
     console.error("No Antigravity installation was found.");
@@ -55,13 +57,18 @@ try {
   console.log(`Antigravity: ${installationPath}\n`);
   const onProgress = ({ percent, message }) => console.log(`  ${String(percent).padStart(3)}%  ${message}`);
 
+  const options = {
+    runtimeSource,
+    ...(noClose ? { closeHost: async () => undefined } : {})
+  };
+
   if (operation === "inspect") {
     console.log(JSON.stringify(patcher.inspectInstallation(installationPath), null, 2));
   } else if (operation === "uninstall") {
     const result = await patcher.uninstall(installationPath, onProgress);
     console.log(`\n${result.message}`);
   } else {
-    const result = await patcher.runOperation(operation, installationPath, { runtimeSource }, onProgress);
+    const result = await patcher.runOperation(operation, installationPath, options, onProgress);
     console.log(`\n${result.message}`);
   }
 } finally {
