@@ -389,6 +389,15 @@ function petSurface(host, data) {
       icon: "clock",
       loading: false,
       controls: "none"
+    },
+    wellness: {
+      tone: "success",
+      label: "Wellness",
+      body: "Reminder",
+      mascot: "waving",
+      icon: "check-circle",
+      loading: false,
+      controls: "success"
     }
   };
 
@@ -637,6 +646,10 @@ function petSurface(host, data) {
    * opens the cluster and the tray, `hovering` makes the pet jump.
    */
   let nearby = false;
+  /** Wandering timer and animation frame state */
+  let wanderTimer = undefined;
+  let wanderAnimation = undefined;
+  let isWandering = false;
   /** Which card the cursor is over, if any: Ui()'s `d`, isPointerSurfaceHovered. */
   let hoveredKey = null;
   /**
@@ -1864,6 +1877,7 @@ function petSurface(host, data) {
     // A caret in either editor pins everything open. Codex's 300 ms is there to
     // forgive a cursor crossing a gap, not to take a half-typed question away.
     if (next || isPetEditor(document.activeElement)) {
+      cancelWander();
       clearTimeout(dismissTimer);
       dismissTimer = undefined;
       if (nearby) return false;
@@ -1878,6 +1892,7 @@ function petSurface(host, data) {
       chatOpen = false;
       hoveredKey = null;
       renderCluster();
+      scheduleWander();
     }, DISMISS_DELAY_MS);
     return false;
   }
@@ -2227,6 +2242,7 @@ function petSurface(host, data) {
         // It has landed somewhere new, which may or may not be under the cursor.
         if (pointerAt !== null) updatePointer(pointerAt.x, pointerAt.y);
         refresh();
+        scheduleWander();
         return;
       }
 
@@ -2234,6 +2250,146 @@ function petSurface(host, data) {
     };
 
     momentumTimer = setTimeout(tick, TICK_MS);
+  }
+
+  /* ── Wandering & Walking Physics ───────────────────────────────────────*/
+
+  function cancelWander() {
+    if (wanderTimer !== undefined) {
+      clearTimeout(wanderTimer);
+      wanderTimer = undefined;
+    }
+    if (wanderAnimation !== undefined) {
+      cancelAnimationFrame(wanderAnimation);
+      wanderAnimation = undefined;
+    }
+    if (isWandering) {
+      isWandering = false;
+      if (transient === "running-left" || transient === "running-right") {
+        transient = null;
+        refresh();
+        report();
+      }
+    }
+  }
+
+  function scheduleWander() {
+    cancelWander();
+    const roamSetting = config.roam ?? "chill";
+    if (roamSetting === "off") return;
+    if (drag !== null || nearby || hovering || replyState !== null || working) return;
+    if (config.force !== "auto" && config.force !== undefined) return;
+
+    // Delay between strolls:
+    // chill: 40s - 80s
+    // active: 15s - 30s
+    const minDelay = roamSetting === "active" ? 15000 : 40000;
+    const maxDelay = roamSetting === "active" ? 30000 : 80000;
+    const delay = Math.floor(minDelay + Math.random() * (maxDelay - minDelay));
+
+    wanderTimer = setTimeout(() => {
+      wanderTimer = undefined;
+      startWander();
+    }, delay);
+  }
+
+  function startWander() {
+    if (drag !== null || nearby || hovering || replyState !== null || working) {
+      scheduleWander();
+      return;
+    }
+    const roamSetting = config.roam ?? "chill";
+    if (roamSetting === "off") return;
+    if (config.force !== "auto" && config.force !== undefined) return;
+
+    const limit = maxX();
+    if (limit <= 80) return;
+
+    // Choose direction based on bounds
+    let dir = Math.random() < 0.5 ? -1 : 1;
+    if (x < 120) dir = 1;
+    else if (x > limit - 120) dir = -1;
+
+    const distance = 140 + Math.random() * 260;
+    let targetX = clampAnchor(x + dir * distance, 0, limit);
+
+    if (Math.abs(targetX - x) < 50) {
+      dir = -dir;
+      targetX = clampAnchor(x + dir * distance, 0, limit);
+    }
+    if (Math.abs(targetX - x) < 40) {
+      scheduleWander();
+      return;
+    }
+
+    const walkSpeed = roamSetting === "active" ? 95 : 65; // pixels per second
+    const walkDirection = targetX > x ? "running-right" : "running-left";
+    const startX = x;
+    const totalDist = Math.abs(targetX - startX);
+    const duration = (totalDist / walkSpeed) * 1000;
+    let startTime = null;
+
+    isWandering = true;
+    transient = walkDirection;
+    refresh();
+
+    function stepWander(timestamp) {
+      if (!isWandering) return;
+      if (drag !== null || nearby || hovering || replyState !== null || working) {
+        cancelWander();
+        scheduleWander();
+        return;
+      }
+
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const currentX = startX + (targetX - startX) * progress;
+      place(currentX, y);
+
+      if (progress < 1) {
+        wanderAnimation = requestAnimationFrame(stepWander);
+      } else {
+        wanderAnimation = undefined;
+        isWandering = false;
+        transient = null;
+        place(targetX, y);
+        refresh();
+        report();
+
+        // 20% chance to wave upon arriving!
+        if (Math.random() < 0.2) {
+          transient = "waving";
+          refresh();
+          setTimeout(() => {
+            if (transient === "waving") {
+              transient = null;
+              refresh();
+            }
+            scheduleWander();
+          }, 1500);
+        } else {
+          scheduleWander();
+        }
+      }
+    }
+
+    wanderAnimation = requestAnimationFrame(stepWander);
+  }
+
+  function cheer(state = "jumping", durationMs = 2000) {
+    if (drag !== null || replyState !== null) return;
+    cancelWander();
+    transient = state;
+    refresh();
+    setTimeout(() => {
+      if (transient === state) {
+        transient = null;
+        refresh();
+        scheduleWander();
+      }
+    }, durationMs);
   }
 
   /* ── The pointer ────────────────────────────────────────────────────────
@@ -2275,6 +2431,7 @@ function petSurface(host, data) {
       pet.setPointerCapture(event.pointerId);
     } catch {}
     stopMomentum();
+    cancelWander();
 
     drag = {
       pointerId: event.pointerId,
@@ -2360,6 +2517,7 @@ function petSurface(host, data) {
     if (!released) {
       forgetPointer();
       report();
+      scheduleWander();
       return;
     }
 
@@ -2382,6 +2540,7 @@ function petSurface(host, data) {
       // or causing macOS to switch Spaces away from full-screen applications.
       host.send({ t: "poke" });
       if (pointerAt !== null) updatePointer(pointerAt.x, pointerAt.y);
+      scheduleWander();
       return;
     }
 
@@ -2390,6 +2549,7 @@ function petSurface(host, data) {
     else {
       report();
       if (pointerAt !== null) updatePointer(pointerAt.x, pointerAt.y);
+      scheduleWander();
     }
   }
 
@@ -2923,8 +3083,16 @@ function petSurface(host, data) {
           config = { ...config, ...message.config };
           if (config.size !== before.size) applySize();
           if (config.sheet !== before.sheet) applySheet();
+          if (config.roam !== before.roam) {
+            cancelWander();
+            scheduleWander();
+          }
           renderActivity();
           paint();
+          break;
+        }
+        case "cheer": {
+          if (typeof message.state === "string") cheer(message.state);
           break;
         }
         case "activity": {
@@ -2936,7 +3104,9 @@ function petSurface(host, data) {
         case "at": {
           if (Number.isFinite(message.x) && Number.isFinite(message.y)) {
             stopMomentum();
+            cancelWander();
             place(message.x, message.y);
+            scheduleWander();
           }
           break;
         }
@@ -2952,6 +3122,7 @@ function petSurface(host, data) {
     if (disposed) return;
     disposed = true;
 
+    cancelWander();
     clearTimeout(frameTimer);
     clearTimeout(momentumTimer);
     clearTimeout(dismissTimer);
@@ -3006,6 +3177,7 @@ function petSurface(host, data) {
     // Unconditionally, because refresh() only rebuilds when the state changes and
     // a pet that woke up idle has never had a sequence started at all.
     rebuild();
+    scheduleWander();
 
     // The sensor cannot see into this document — on the desktop it is a window in
     // another process with nothing shared but a message channel. This is the only
@@ -3260,6 +3432,41 @@ const settings = plugin.settings.define({
     description:
       "Let a flick carry the pet on and bounce it off the edges. Off is what Codex does day to day — a drop leaves the pet exactly where you let go.",
     default: false
+  },
+  roam: {
+    type: "select",
+    label: "Wander / Roam",
+    description: "Let the pet stretch its legs and walk across your screen when idle.",
+    default: "chill",
+    options: [
+      { value: "chill", label: "Chill (relaxed strolls every 40-80s)" },
+      { value: "active", label: "Active (frequent strolls every 15-30s)" },
+      { value: "off", label: "Stationary (stay in place)" }
+    ]
+  },
+  waterReminder: {
+    type: "select",
+    label: "Drink water reminder",
+    description: "Get gentle hydration reminders from your pet.",
+    default: "45",
+    options: [
+      { value: "30", label: "Every 30 minutes" },
+      { value: "45", label: "Every 45 minutes" },
+      { value: "60", label: "Every 60 minutes" },
+      { value: "off", label: "Off" }
+    ]
+  },
+  stretchReminder: {
+    type: "select",
+    label: "Stand & stretch reminder",
+    description: "Remind you to stand up, roll shoulders, and look 20 feet away.",
+    default: "60",
+    options: [
+      { value: "30", label: "Every 30 minutes" },
+      { value: "45", label: "Every 45 minutes" },
+      { value: "60", label: "Every 60 minutes" },
+      { value: "off", label: "Off" }
+    ]
   },
   sheet: {
     type: "string",
@@ -5089,6 +5296,63 @@ function wake() {
   };
 }
 
+/* ── Wellness Reminders (Hydration & Stretch) ──────────────────────────────*/
+
+let wellnessWaterCard = null;
+let wellnessStretchCard = null;
+let lastWaterReminderMs = Date.now();
+let lastStretchReminderMs = Date.now();
+
+function checkWellness() {
+  const now = Date.now();
+
+  const waterSetting = settings.waterReminder ?? "45";
+  if (waterSetting !== "off") {
+    const waterMin = parseInt(waterSetting, 10);
+    if (!isNaN(waterMin) && waterMin > 0) {
+      const intervalMs = waterMin * 60 * 1000;
+      if (now - lastWaterReminderMs >= intervalMs) {
+        if (wellnessWaterCard === null) {
+          dismissed.delete("wellness-water");
+          wellnessWaterCard = {
+            key: "wellness-water",
+            status: "wellness",
+            title: "💧 Drink Water",
+            subtitle: "Time for a fresh sip! Stay hydrated.",
+            place: Number.MAX_SAFE_INTEGER - 1,
+            sortAtMs: now,
+            updatedAtMs: now
+          };
+          surface?.send({ t: "cheer", state: "waving" });
+        }
+      }
+    }
+  }
+
+  const stretchSetting = settings.stretchReminder ?? "60";
+  if (stretchSetting !== "off") {
+    const stretchMin = parseInt(stretchSetting, 10);
+    if (!isNaN(stretchMin) && stretchMin > 0) {
+      const intervalMs = stretchMin * 60 * 1000;
+      if (now - lastStretchReminderMs >= intervalMs) {
+        if (wellnessStretchCard === null) {
+          dismissed.delete("wellness-stretch");
+          wellnessStretchCard = {
+            key: "wellness-stretch",
+            status: "wellness",
+            title: "🚶 Stand Up & Stretch",
+            subtitle: "Roll your shoulders and look 20ft away.",
+            place: Number.MAX_SAFE_INTEGER - 2,
+            sortAtMs: now,
+            updatedAtMs: now
+          };
+          surface?.send({ t: "cheer", state: "jumping" });
+        }
+      }
+    }
+  }
+}
+
 /** Codex's latestActivityFirst normalizes session priority before comparing
  * recency. Status still controls each card's tone and the attention badge. */
 function activityOf() {
@@ -5112,9 +5376,17 @@ function activityOf() {
   }
   if (greeting !== null) entries.push(greeting);
 
+  checkWellness();
+  if (wellnessWaterCard !== null && !dismissed.has("wellness-water")) {
+    entries.push(wellnessWaterCard);
+  }
+  if (wellnessStretchCard !== null && !dismissed.has("wellness-stretch")) {
+    entries.push(wellnessStretchCard);
+  }
+
   entries.sort(
     (a, b) =>
-      Number(a.status === "greeting") - Number(b.status === "greeting") ||
+      Number(a.status === "greeting" || a.status === "wellness") - Number(b.status === "greeting" || b.status === "wellness") ||
       b.sortAtMs - a.sortAtMs ||
       a.place - b.place ||
       a.key.localeCompare(b.key)
@@ -5300,7 +5572,10 @@ const configOf = () => ({
   force: settings.force,
   sheet: selectedPet?.spritesheetDataUrl ?? settings.sheet,
   activity: settings.activity !== false,
-  bounce: settings.bounce === true
+  bounce: settings.bounce === true,
+  roam: settings.roam ?? "chill",
+  waterReminder: settings.waterReminder ?? "45",
+  stretchReminder: settings.stretchReminder ?? "60"
 });
 
 /** Focus the host renderer after the desktop surface raises its native window. */
@@ -5338,6 +5613,10 @@ function composerField() {
 /** Codex opens the thread a notification belongs to. This is that click. */
 function openThread(key) {
   closePetLibrary();
+  if (key === "wellness-water" || key === "wellness-stretch") {
+    dismiss(key);
+    return true;
+  }
   if (key === GREETING_KEY) {
     focusComposer();
     return true;
@@ -5637,6 +5916,21 @@ async function stopThread(key) {
  * concerned, and two seconds of it sitting there would read as a dead button.
  */
 function dismiss(key) {
+  if (key === "wellness-water" || key === "wellness-stretch") {
+    if (key === "wellness-water") {
+      wellnessWaterCard = null;
+      lastWaterReminderMs = Date.now();
+    } else {
+      wellnessStretchCard = null;
+      lastStretchReminderMs = Date.now();
+    }
+    dismissed.set(key, Date.now());
+    surface?.send({ t: "cheer", state: "jumping" });
+    activity = activity.filter((item) => item.key !== key);
+    signature = signatureOf(activity, working);
+    surface?.send({ t: "activity", entries: activity, working });
+    return;
+  }
   const entry = activity.find((item) => item.key === key);
   if (entry === undefined) return;
   dismissed.set(key, entry.updatedAtMs);
@@ -6047,7 +6341,8 @@ const LABELS = {
   waiting: "needs input",
   failed: "blocked",
   review: "ready",
-  idle: "idle"
+  idle: "idle",
+  wellness: "wellness"
 };
 
 /** The whole state of the pet as one line, for the note row in the panel. */
@@ -6066,7 +6361,7 @@ function describeStatus() {
   const held = settings.force === "auto" ? "" : ", held by this panel";
 
   // The greeting is a card, but it is not a thread, so it is not counted as one.
-  const threads = activity.filter((entry) => entry.status !== "greeting");
+  const threads = activity.filter((entry) => entry.status !== "greeting" && entry.status !== "wellness");
   const reporting =
     settings.activity === false
       ? "cards hidden"

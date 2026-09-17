@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-17T08:13:02.226Z",
+  "generatedAt": "2026-09-17T08:13:17.252Z",
   "entries": [
     {
       "id": "computer-use",
@@ -707,7 +707,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/pets",
-      "bytes": 1508839,
+      "bytes": 1517956,
       "files": [
         {
           "name": "assets/rocky.webp",
@@ -716,8 +716,8 @@
         },
         {
           "name": "index.js",
-          "bytes": 261247,
-          "sha256": "ad003461cf52476688a569fe5c0f8775d111283ac58c34b5f12a0877f3bfcfb4"
+          "bytes": 270364,
+          "sha256": "b9829ef2988fc3189f127871ffc6e25f07822d4a58fce4da3b560e997c0824b4"
         },
         {
           "name": "plugin.json",
