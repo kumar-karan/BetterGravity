@@ -3650,6 +3650,12 @@ const settings = plugin.settings.define({
       { value: "off", label: "Off" }
     ]
   },
+  workTimeOnly: {
+    type: "boolean",
+    label: "Only while actively working",
+    description: "Only count active screen and working time. Pauses countdown during Mac sleep, screen lock, or when away.",
+    default: true
+  },
   accessory: {
     type: "select",
     label: "Accessory / Hat",
@@ -4459,6 +4465,17 @@ function renderPetSettingsSection() {
     }
   ));
 
+  // 7. Active Work Time Only Toggle
+  group2.append(createSettingToggleRow(
+    "Only while actively working",
+    "Pauses countdown during Mac sleep, screen lock, or when away",
+    settings.workTimeOnly !== false,
+    "workTimeOnly",
+    (checked) => {
+      settings.workTimeOnly = checked;
+    }
+  ));
+
   // Group 3: Reactions & Interactions
   const group3 = libraryElement("div", "bettergravity-pet-settings__group");
   const g3Title = libraryElement("div", "bettergravity-pet-settings__group-title", "Reactions & Interactions");
@@ -4515,7 +4532,7 @@ function renderPetLibrary() {
   // primitive slots so an in-place update is detected as well.
   const snapshot = [libraryBusy, libraryCreating, shown, selectedPetId, settings.sheet,
     selectedPet?.spritesheetDataUrl, petName(), notice, !!libraryError, libraryState === null, records.length, runs.length,
-    settings.size, settings.home, settings.accessory, settings.roam, settings.waterReminder, settings.stretchReminder, settings.terminalReactions, settings.bounce, settings.activity];
+    settings.size, settings.home, settings.accessory, settings.roam, settings.waterReminder, settings.stretchReminder, settings.workTimeOnly, settings.terminalReactions, settings.bounce, settings.activity];
   for (const pet of records) snapshot.push(pet.id, pet.displayName, pet.description, pet.previewDataUrl);
   for (const run of runs) snapshot.push(run.name, run.stage, run.message, run.previewDataUrl);
   if (libraryRenderSnapshot?.length === snapshot.length && snapshot.every((value, index) => value === libraryRenderSnapshot[index])) return;
@@ -6101,22 +6118,95 @@ function wake() {
   };
 }
 
-/* ── Wellness Reminders (Hydration & Stretch) ──────────────────────────────*/
+/* ── Wellness Reminders (Hydration & Stretch) with Smart Work Tracking ────*/
+
+const SLEEP_GAP_THRESHOLD_MS = 4500; // macOS sleep / system stall detection
+const IDLE_THRESHOLD_MS = 3 * 60 * 1000; // 3 minutes without user input
+const ACTIVITY_THROTTLE_MS = 5000; // Throttle listener updates to save CPU
 
 let wellnessWaterCard = null;
 let wellnessStretchCard = null;
-let lastWaterReminderMs = Date.now();
-let lastStretchReminderMs = Date.now();
+let activeWaterWorkSec = 0;
+let activeStretchWorkSec = 0;
+let lastHeartbeatMs = Date.now();
+let lastUserActivityMs = Date.now();
+let lastThrottledActivityMs = 0;
 
-function checkWellness() {
+function noteUserActivity() {
+  lastUserActivityMs = Date.now();
+}
+
+function noteUserActivityThrottled() {
+  const now = Date.now();
+  if (now - lastThrottledActivityMs >= ACTIVITY_THROTTLE_MS) {
+    lastThrottledActivityMs = now;
+    lastUserActivityMs = now;
+  }
+}
+
+// Hook into user activity events in the window to detect active presence
+if (typeof window !== "undefined" && typeof document !== "undefined") {
+  const onActivity = () => noteUserActivityThrottled();
+  const onDirectAction = () => noteUserActivity();
+
+  window.addEventListener("pointerdown", onDirectAction, { passive: true });
+  window.addEventListener("keydown", onDirectAction, { passive: true });
+  window.addEventListener("wheel", onActivity, { passive: true });
+  window.addEventListener("mousemove", onActivity, { passive: true });
+  window.addEventListener("focus", onDirectAction);
+  window.addEventListener("online", onDirectAction);
+  document.addEventListener("visibilitychange", onDirectAction);
+
+  plugin.onDispose(() => {
+    window.removeEventListener("pointerdown", onDirectAction);
+    window.removeEventListener("keydown", onDirectAction);
+    window.removeEventListener("wheel", onActivity);
+    window.removeEventListener("mousemove", onActivity);
+    window.removeEventListener("focus", onDirectAction);
+    window.removeEventListener("online", onDirectAction);
+    document.removeEventListener("visibilitychange", onDirectAction);
+  });
+}
+
+function updateActiveWorkTime(isWorking) {
+  const now = Date.now();
+  const deltaMs = now - lastHeartbeatMs;
+  lastHeartbeatMs = now;
+
+  // If system slept or event loop stalled, skip adding gap to active work time
+  if (deltaMs > SLEEP_GAP_THRESHOLD_MS || deltaMs <= 0) {
+    return;
+  }
+
+  const deltaSec = Math.min(deltaMs / 1000, 3);
+  const workTimeOnly = settings.workTimeOnly !== false;
+
+  if (!workTimeOnly) {
+    activeWaterWorkSec += deltaSec;
+    activeStretchWorkSec += deltaSec;
+    return;
+  }
+
+  const isWindowVisible = typeof document === "undefined" || document.visibilityState !== "hidden";
+  const isUserActive = (now - lastUserActivityMs) <= IDLE_THRESHOLD_MS;
+  const isActivelyWorking = isWorking || (isWindowVisible && isUserActive);
+
+  if (isActivelyWorking) {
+    activeWaterWorkSec += deltaSec;
+    activeStretchWorkSec += deltaSec;
+  }
+}
+
+function checkWellness(isWorking) {
+  updateActiveWorkTime(isWorking);
   const now = Date.now();
 
   const waterSetting = settings.waterReminder ?? "45";
   if (waterSetting !== "off") {
     const waterMin = parseInt(waterSetting, 10);
     if (!isNaN(waterMin) && waterMin > 0) {
-      const intervalMs = waterMin * 60 * 1000;
-      if (now - lastWaterReminderMs >= intervalMs) {
+      const targetSec = waterMin * 60;
+      if (activeWaterWorkSec >= targetSec) {
         if (wellnessWaterCard === null) {
           dismissed.delete("wellness-water");
           wellnessWaterCard = {
@@ -6138,8 +6228,8 @@ function checkWellness() {
   if (stretchSetting !== "off") {
     const stretchMin = parseInt(stretchSetting, 10);
     if (!isNaN(stretchMin) && stretchMin > 0) {
-      const intervalMs = stretchMin * 60 * 1000;
-      if (now - lastStretchReminderMs >= intervalMs) {
+      const targetSec = stretchMin * 60;
+      if (activeStretchWorkSec >= targetSec) {
         if (wellnessStretchCard === null) {
           dismissed.delete("wellness-stretch");
           wellnessStretchCard = {
@@ -6181,7 +6271,7 @@ function activityOf() {
   }
   if (greeting !== null) entries.push(greeting);
 
-  checkWellness();
+  checkWellness(working);
   if (wellnessWaterCard !== null && !dismissed.has("wellness-water")) {
     entries.push(wellnessWaterCard);
   }
@@ -6726,10 +6816,10 @@ function dismiss(key) {
   if (key === "wellness-water" || key === "wellness-stretch") {
     if (key === "wellness-water") {
       wellnessWaterCard = null;
-      lastWaterReminderMs = Date.now();
+      activeWaterWorkSec = 0;
     } else {
       wellnessStretchCard = null;
-      lastStretchReminderMs = Date.now();
+      activeStretchWorkSec = 0;
     }
     dismissed.set(key, Date.now());
     surface?.send({ t: "cheer", state: "jumping" });
@@ -6749,6 +6839,7 @@ function dismiss(key) {
 /** Everything the pet sends back. */
 function fromSurface(message) {
   if (message === null || typeof message !== "object") return;
+  noteUserActivity();
   // Older runtimes forward this request instead of handling a native popup.
   // Keep their menu usable until the host's next runtime update.
   if (message.type === "bettergravity:overlay-context-menu") {
@@ -7111,6 +7202,14 @@ plugin.onDispose(
       selectedPet = null;
       selectedPetId = "rocky";
       plugin.storage.set("selectedPet", "rocky");
+    }
+    if (key === "waterReminder" && settings.waterReminder === "off") {
+      activeWaterWorkSec = 0;
+      wellnessWaterCard = null;
+    }
+    if (key === "stretchReminder" && settings.stretchReminder === "off") {
+      activeStretchWorkSec = 0;
+      wellnessStretchCard = null;
     }
     // Moving house means a new surface; everything else the live one can be told.
     if (key === "home") {
