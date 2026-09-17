@@ -132,7 +132,7 @@ export class OverlayWindow {
     const live: Live = {
       window, owner, surface, attached: false,
       interactive: surface.interactive === true, focusable: false,
-      displayId: (display as { id?: number })?.id
+      displayId: display.id
     };
     this.live = live;
 

@@ -7,6 +7,7 @@ interface FakeWindow {
   setFocusable: ReturnType<typeof vi.fn>;
   isFocusable(): boolean;
   setIgnoreMouseEvents: ReturnType<typeof vi.fn>;
+  setBounds: ReturnType<typeof vi.fn>;
   focus: ReturnType<typeof vi.fn>;
   showInactive: ReturnType<typeof vi.fn>;
   webContents: {
@@ -376,8 +377,8 @@ describe("desktop overlay pointer recovery", () => {
     overlay.toPage({ type: "bettergravity:overlay-drag-state", dragging: true });
 
     // Mock moving cursor to a second display
-    const { screen } = vi.mocked(await import("electron"));
-    screen.getDisplayNearestPoint.mockReturnValueOnce({
+    const { screen } = await import("electron");
+    (screen.getDisplayNearestPoint as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce({
       id: 2,
       workArea: { x: 1920, y: 0, width: 3440, height: 1410 },
       scaleFactor: 1

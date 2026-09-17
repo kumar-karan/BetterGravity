@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-16T21:18:21.017Z",
+  "generatedAt": "2026-09-17T08:13:02.226Z",
   "entries": [
     {
       "id": "computer-use",
@@ -255,12 +255,12 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/fork-chat",
-      "bytes": 68312,
+      "bytes": 70333,
       "files": [
         {
           "name": "index.js",
-          "bytes": 54009,
-          "sha256": "22f00df93dde9cf9927a38396badc007316826ec8fc173f1e3d3abed48e2d62b"
+          "bytes": 54248,
+          "sha256": "263dad043466d820e900d252f21f024624ab3c695101e85e94d69ed4d277d9c6"
         },
         {
           "name": "plugin.json",
@@ -274,8 +274,8 @@
         },
         {
           "name": "styles/fork.css",
-          "bytes": 12205,
-          "sha256": "6ac2d9f2e93e5aa32dfd7e53161cdf861dab7896c21cf5c4ca15e4af25a0c31e"
+          "bytes": 13987,
+          "sha256": "a4ce69a2f61868e43a0ed4998c500464a8ab20144ad55c8eaf868e25ffb2f46c"
         }
       ]
     },
@@ -311,7 +311,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/gemini-app",
-      "bytes": 949319,
+      "bytes": 949125,
       "files": [
         {
           "name": "assets/antigravity-mark.png",
@@ -340,8 +340,8 @@
         },
         {
           "name": "styles/conversation.css",
-          "bytes": 75294,
-          "sha256": "b672bc6ef7eb8160b8dfd2b7096ad2be2e2cb51189eb0b7b008234fc5b3ce9c6"
+          "bytes": 75100,
+          "sha256": "46e07ff99ab94a80b8e13408f50bd68d9cb89e7a65d870c1fd0c7234ef1c67ff"
         },
         {
           "name": "styles/dialog.css",
@@ -707,7 +707,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/pets",
-      "bytes": 1506721,
+      "bytes": 1508839,
       "files": [
         {
           "name": "assets/rocky.webp",
@@ -716,8 +716,8 @@
         },
         {
           "name": "index.js",
-          "bytes": 259129,
-          "sha256": "e6bdf7fc2477877b4b57151eb1bd851a2be90efe5e9561bdfdfc959f7ce115fc"
+          "bytes": 261247,
+          "sha256": "ad003461cf52476688a569fe5c0f8775d111283ac58c34b5f12a0877f3bfcfb4"
         },
         {
           "name": "plugin.json",
