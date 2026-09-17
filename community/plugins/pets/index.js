@@ -1124,13 +1124,33 @@ function petSurface(host, data) {
     '<path d="M 139 133 L 139 146" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>' +
     '</svg>';
 
+  const ACCESSORY_BOW =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-bow-grad" x1="0%" y1="0%" x2="0%" y2="100%">' +
+    '<stop offset="0%" stop-color="#ff6b81"/>' +
+    '<stop offset="50%" stop-color="#ee5253"/>' +
+    '<stop offset="100%" stop-color="#b33939"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 91 48 L 81 68 L 87 64 L 93 67 L 94 48 Z" fill="url(#bg-pet-bow-grad)" stroke="#6b1414" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M 101 48 L 99 67 L 105 64 L 111 68 L 103 48 Z" fill="url(#bg-pet-bow-grad)" stroke="#6b1414" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M 94 46 C 82 28 64 30 64 43 C 64 54 82 54 94 48 Z" fill="url(#bg-pet-bow-grad)" stroke="#6b1414" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M 98 46 C 110 28 128 30 128 43 C 128 54 110 54 98 48 Z" fill="url(#bg-pet-bow-grad)" stroke="#6b1414" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M 87 37 C 78 37 71 39 69 43" stroke="#ffa8b6" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+    '<path d="M 105 37 C 114 37 121 39 123 43" stroke="#ffa8b6" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+    '<rect x="90" y="40" width="12" height="13" rx="4" fill="#ff4757" stroke="#6b1414" stroke-width="1.8"/>' +
+    '<circle cx="94" cy="44" r="1.8" fill="#ffffff" opacity="0.85"/>' +
+    '</svg>';
+
   const ACCESSORIES = {
     none: "",
     party: ACCESSORY_PARTY_HAT,
     sunglasses: ACCESSORY_SUNGLASSES,
     crown: ACCESSORY_CROWN,
     wizard: ACCESSORY_WIZARD,
-    coffee: ACCESSORY_COFFEE
+    coffee: ACCESSORY_COFFEE,
+    bow: ACCESSORY_BOW
   };
 
   function applyAccessory() {
@@ -3641,7 +3661,8 @@ const settings = plugin.settings.define({
       { value: "sunglasses", label: "🕶️ Pixel Sunglasses" },
       { value: "crown", label: "👑 Golden Crown" },
       { value: "wizard", label: "🧙 Wizard Hat" },
-      { value: "coffee", label: "☕ Steaming Coffee" }
+      { value: "coffee", label: "☕ Steaming Coffee" },
+      { value: "bow", label: "🎀 Red Bow" }
     ]
   },
   sheet: {
@@ -3989,6 +4010,24 @@ const LIBRARY_ACCESSORIES = {
     '<rect x="136" y="128" width="22" height="22" rx="4" fill="#f5f6fa" stroke="#2d3436" stroke-width="2"/>' +
     '<ellipse cx="147" cy="128" rx="9" ry="3" fill="url(#bg-lib-pet-coffee-brew)"/>' +
     '<path d="M 139 133 L 139 146" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>' +
+    '</svg>',
+  bow:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-lib-pet-bow-grad" x1="0%" y1="0%" x2="0%" y2="100%">' +
+    '<stop offset="0%" stop-color="#ff6b81"/>' +
+    '<stop offset="50%" stop-color="#ee5253"/>' +
+    '<stop offset="100%" stop-color="#b33939"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 91 48 L 81 68 L 87 64 L 93 67 L 94 48 Z" fill="url(#bg-lib-pet-bow-grad)" stroke="#6b1414" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M 101 48 L 99 67 L 105 64 L 111 68 L 103 48 Z" fill="url(#bg-lib-pet-bow-grad)" stroke="#6b1414" stroke-width="1.6" stroke-linejoin="round"/>' +
+    '<path d="M 94 46 C 82 28 64 30 64 43 C 64 54 82 54 94 48 Z" fill="url(#bg-lib-pet-bow-grad)" stroke="#6b1414" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M 98 46 C 110 28 128 30 128 43 C 128 54 110 54 98 48 Z" fill="url(#bg-lib-pet-bow-grad)" stroke="#6b1414" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M 87 37 C 78 37 71 39 69 43" stroke="#ffa8b6" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+    '<path d="M 105 37 C 114 37 121 39 123 43" stroke="#ffa8b6" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
+    '<rect x="90" y="40" width="12" height="13" rx="4" fill="#ff4757" stroke="#6b1414" stroke-width="1.8"/>' +
+    '<circle cx="94" cy="44" r="1.8" fill="#ffffff" opacity="0.85"/>' +
     '</svg>'
 };
 
@@ -4326,7 +4365,8 @@ function renderPetSettingsSection() {
     { value: "sunglasses", label: "🕶️ Pixel Sunglasses" },
     { value: "crown", label: "👑 Golden Crown" },
     { value: "wizard", label: "🧙 Wizard Hat" },
-    { value: "coffee", label: "☕ Steaming Coffee" }
+    { value: "coffee", label: "☕ Steaming Coffee" },
+    { value: "bow", label: "🎀 Red Bow" }
   ];
   group1.append(createSettingSelectRow(
     "Hat & Accessory",
