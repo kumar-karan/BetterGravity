@@ -3087,8 +3087,38 @@ function petSurface(host, data) {
             cancelWander();
             scheduleWander();
           }
+          if (config.terminalReactions === false && before.terminalReactions !== false) {
+            delete pet.dataset.petCoding;
+            if (transient === "running") {
+              transient = null;
+              refresh();
+            }
+          }
           renderActivity();
           paint();
+          break;
+        }
+        case "code-event": {
+          if (config.terminalReactions === false) break;
+          const kind = message.kind;
+          if (kind === "typing") {
+            if (drag === null && replyState === null) {
+              cancelWander();
+              pet.dataset.petCoding = "true";
+              if (effectiveState() === "idle") {
+                transient = "running";
+                refresh();
+              }
+            }
+          } else if (kind === "success") {
+            delete pet.dataset.petCoding;
+            if (transient === "running") transient = null;
+            cheer("jumping", 2400);
+          } else if (kind === "failure") {
+            delete pet.dataset.petCoding;
+            if (transient === "running") transient = null;
+            cheer("failed", 3000);
+          }
           break;
         }
         case "cheer": {
@@ -3424,6 +3454,12 @@ const settings = plugin.settings.define({
     label: "Show what the agent is doing",
     description:
       "Activity cards and an indicator coloured by the most important notification. The pet keeps animating while an agent works, even with cards hidden.",
+    default: true
+  },
+  terminalReactions: {
+    type: "boolean",
+    label: "Terminal & build reactions",
+    description: "Pet types furiously during builds/commands, cheers on success, and alerts you on errors.",
     default: true
   },
   bounce: {
@@ -4821,6 +4857,204 @@ function toTimestampMs(timeObj) {
   return sec * 1000 + Math.round(nanos / 1e6);
 }
 
+const COMMAND_TOOLS = new Set(["run_command", "write_to_file", "replace_file_content"]);
+const commandTracker = new Map();
+let commandTrackerInitialized = false;
+
+function checkCommandTransitions(manager) {
+  if (surface === null) return false;
+  let emitted = false;
+  const mgr = manager ?? findAgentStatesManager() ?? activityManager;
+  const states = [];
+  if (mgr && typeof mgr.getAgentStates === "function") {
+    try {
+      const agentStates = mgr.getAgentStates();
+      if (agentStates && typeof agentStates.values === "function") {
+        for (const item of agentStates.values()) {
+          const st = item?.provider?.getState?.();
+          if (st && typeof st === "object") states.push(st);
+        }
+      } else if (agentStates && typeof agentStates === "object") {
+        for (const key of Object.keys(agentStates)) {
+          const st = agentStates[key]?.provider?.getState?.();
+          if (st && typeof st === "object") states.push(st);
+        }
+      }
+    } catch {}
+  }
+  if (typeof mgr?.getState === "function") {
+    try {
+      const st = mgr.getState();
+      if (st && typeof st === "object" && !states.includes(st)) states.push(st);
+    } catch {}
+  }
+  const currentId =
+    (typeof document !== "undefined" && (
+      document.querySelector(VIEW)?.getAttribute("data-cascade-id") ||
+      document.querySelector('[data-testid="agent-input-box"]')?.getAttribute("data-cascade-id")
+    )) || "";
+  if (currentId && mgr) {
+    const st = getProviderState(mgr, currentId);
+    if (st && typeof st === "object" && !states.includes(st)) states.push(st);
+  }
+
+  if (states.length === 0) return;
+
+  const handleCommandItem = (id, toolName, command, rawStatus, failed) => {
+    const isRunning = (rawStatus === 2 || rawStatus === 8 || rawStatus === 9) && !failed;
+    const isDone = rawStatus === 3 || rawStatus === 4 || rawStatus === 6 || rawStatus === 7 || failed || !isRunning;
+
+    if (!commandTrackerInitialized) {
+      if (isDone) {
+        commandTracker.set(id, { toolName, command, status: rawStatus, state: "completed", completedAt: Date.now() });
+      } else if (isRunning) {
+        commandTracker.set(id, { toolName, command, status: rawStatus, state: "typing", startedAt: Date.now() });
+        if (settings.terminalReactions !== false) {
+          emitted = true;
+          surface?.send({ t: "code-event", kind: "typing", tool: toolName, command });
+        }
+      }
+      return;
+    }
+
+    if (isRunning) {
+      if (!commandTracker.has(id)) {
+        commandTracker.set(id, { toolName, command, status: rawStatus, state: "typing", startedAt: Date.now() });
+        if (settings.terminalReactions !== false) {
+          emitted = true;
+          surface?.send({ t: "code-event", kind: "typing", tool: toolName, command });
+        }
+      }
+    } else if (isDone) {
+      const tracked = commandTracker.get(id);
+      if (tracked) {
+        if (tracked.state === "typing") {
+          const kind = failed ? "failure" : "success";
+          tracked.state = kind;
+          tracked.completedAt = Date.now();
+          if (settings.terminalReactions !== false) {
+            emitted = true;
+            surface?.send({ t: "code-event", kind, command: command || tracked.command });
+          }
+        }
+      } else {
+        const kind = failed ? "failure" : "success";
+        commandTracker.set(id, { toolName, command, status: rawStatus, state: kind, completedAt: Date.now() });
+        if (settings.terminalReactions !== false) {
+          emitted = true;
+          surface?.send({ t: "code-event", kind, command });
+        }
+      }
+    }
+  };
+
+  for (const st of states) {
+    // 1. Inspect trajectorySlice.stepsInSlice
+    if (Array.isArray(st.trajectorySlice?.stepsInSlice)) {
+      const steps = st.trajectorySlice.stepsInSlice;
+      for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        if (!step || typeof step !== "object") continue;
+        const toolName = (
+          step.metadata?.toolCall?.name ||
+          step.metadata?.toolName ||
+          step.step?.value?.toolName ||
+          step.toolName ||
+          ""
+        ).toLowerCase().trim();
+
+        if (!COMMAND_TOOLS.has(toolName)) continue;
+
+        const id = step.metadata?.executionId || step.id || step.stepId || step.metadata?.stepId ||
+          (step._petCmdId ??= `step_${toTimestampMs(step.metadata?.createdAt || step.metadata?.startedAt) || i}_${toolName}`);
+
+        const args = step.step?.value?.args || step.metadata?.toolCall?.args || step.metadata?.args || step.args;
+        const command = String(
+          args?.CommandLine ||
+          args?.commandLine ||
+          args?.command ||
+          args?.TargetFile ||
+          args?.targetFile ||
+          step.metadata?.toolAction ||
+          step.metadata?.toolSummary ||
+          ""
+        ).trim();
+
+        const status = step.status ?? step.step?.status ?? step.step?.value?.status ?? 2;
+
+        const result = step.step?.value?.result || step.result;
+        const exitCode = result?.exitCode ?? result?.exit_code ?? result?.code;
+        const isError = result?.isError === true || result?.error != null || step.error != null ||
+                        result?.status === "error" || result?.status === "failed";
+        let failed = isError || (typeof exitCode === "number" && exitCode !== 0) ||
+                     status === 4 || status === 6 || status === 7;
+
+        if (!failed && result) {
+          const out = typeof result === "string" ? result : (result.output || result.content || step.step?.value?.response || "");
+          if (typeof out === "string") {
+            const match = out.match(/The command exited with code (\d+)/i);
+            if (match && parseInt(match[1], 10) !== 0) {
+              failed = true;
+            }
+          }
+        }
+
+        handleCommandItem(id, toolName, command, status, failed);
+      }
+    }
+
+    // 2. Inspect backgroundTasks
+    if (Array.isArray(st.backgroundTasks)) {
+      for (let i = 0; i < st.backgroundTasks.length; i++) {
+        const t = st.backgroundTasks[i];
+        if (!t || typeof t !== "object") continue;
+        const toolName = (
+          t.taskSnapshot?.toolName ||
+          t.toolName ||
+          t.step?.metadata?.toolCall?.name ||
+          t.step?.metadata?.toolName ||
+          ""
+        ).toLowerCase().trim();
+
+        if (!COMMAND_TOOLS.has(toolName) && toolName !== "") continue;
+        const effectiveTool = COMMAND_TOOLS.has(toolName) ? toolName : "run_command";
+
+        const id = t.taskId || t.id || t.taskSnapshot?.taskId || t.step?.metadata?.executionId ||
+          (t._petCmdId ??= `bg_task_${i}`);
+
+        const command = String(
+          t.taskSnapshot?.args?.CommandLine ||
+          t.args?.CommandLine ||
+          t.taskSnapshot?.command ||
+          t.command ||
+          t.taskSnapshot?.description ||
+          t.taskSnapshot?.toolSummary ||
+          t.description ||
+          ""
+        ).trim();
+
+        const rawStatus = t.step?.status ?? (t.status !== undefined ? t.status : (t.isRunning ? 2 : (t.completedAtMs ? 3 : 2)));
+        const taskExitCode = t.exitCode ?? t.taskSnapshot?.exitCode ?? t.step?.value?.result?.exitCode;
+        const failed = t.killed || t.terminatedEarly || rawStatus === 4 || rawStatus === 6 || rawStatus === 7 ||
+                       (typeof taskExitCode === "number" && taskExitCode !== 0);
+
+        handleCommandItem(id, effectiveTool, command, rawStatus, failed);
+      }
+    }
+  }
+
+  commandTrackerInitialized = true;
+
+  const now = Date.now();
+  for (const [key, entry] of commandTracker) {
+    if (entry.completedAt && now - entry.completedAt > 30000) {
+      commandTracker.delete(key);
+    }
+  }
+
+  return emitted;
+}
+
 /**
  * Read current work from Antigravity's live Redux store, including conversations
  * whose rows are virtualised, filtered, or collapsed. React context dependencies
@@ -4903,6 +5137,7 @@ function readRows() {
   const revisions = new Map();
 
   const manager = findAgentStatesManager();
+  checkCommandTransitions(manager);
   if (manager && typeof manager.getAgentStates === "function") {
     try {
       const statesMap = manager.getAgentStates();
@@ -5572,6 +5807,7 @@ const configOf = () => ({
   force: settings.force,
   sheet: selectedPet?.spritesheetDataUrl ?? settings.sheet,
   activity: settings.activity !== false,
+  terminalReactions: settings.terminalReactions !== false,
   bounce: settings.bounce === true,
   roam: settings.roam ?? "chill",
   waterReminder: settings.waterReminder ?? "45",
@@ -6152,6 +6388,8 @@ function stopActivitySources() {
 
 function stop() {
   stopActivitySources();
+  commandTracker.clear();
+  commandTrackerInitialized = false;
   const live = surface;
   surface = null;
   if (live !== null) live.close();
@@ -6219,9 +6457,10 @@ function poll() {
   if (libraryPage && !libraryCreating && (!libraryPage.isConnected || location.href !== libraryHref)) closePetLibrary();
   if (surface === null) return;
   syncActivitySources();
+  const emittedCodeEvent = checkCommandTransitions(findAgentStatesManager() ?? activityManager) === true;
   const next = activityOf();
   const nextSignature = signatureOf(next.entries, next.working);
-  if (nextSignature === signature) return;
+  if (nextSignature === signature && !emittedCodeEvent) return;
 
   activity = next.entries;
   working = next.working;

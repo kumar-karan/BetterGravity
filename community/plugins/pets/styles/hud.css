@@ -1140,6 +1140,26 @@
   }
 }
 
+@keyframes petShockShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-4px);
+  }
+  40%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+.bettergravity-pet[data-pet-state="failed"] {
+  animation: petShockShake 0.4s ease-in-out;
+}
+
+.bettergravity-pet[data-pet-coding="true"] {
+  filter: drop-shadow(0 0 6px rgba(64, 201, 119, 0.45));
+}
+
 @media (prefers-reduced-transparency: reduce) {
   .bettergravity-pet__badge,
   .bettergravity-pet-card__close {
@@ -1148,6 +1168,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .bettergravity-pet,
+  .bettergravity-pet[data-pet-state="failed"],
   .bettergravity-pet__badge,
   .bettergravity-pet__badge-count,
   .bettergravity-pet__badge-chevron,
@@ -1160,6 +1182,9 @@
   .bettergravity-pet-chat {
     transition: none;
   }
+  .bettergravity-pet[data-pet-state="failed"] {
+    animation: none;
+  }
   .bettergravity-pet-card__reply {
     transform: none;
   }
@@ -1170,3 +1195,4 @@
     -webkit-text-fill-color: currentColor;
   }
 }
+
