@@ -1025,8 +1025,8 @@ function petSurface(host, data) {
   // Deliberately unclamped: Ff does not floor these at zero, so a pet wider or
   // taller than the space it is in hands clampAnchor an inverted range, which is
   // the case Vf centres. Flooring them here would pin it to the top-left instead.
-  const maxX = () => window.innerWidth - width;
-  const maxY = () => window.innerHeight - height - ANCHOR_BOTTOM_RESERVE;
+  const maxX = () => (window.innerWidth || document.documentElement.clientWidth || window.screen.availWidth) - width;
+  const maxY = () => (window.innerHeight || document.documentElement.clientHeight || window.screen.availHeight) - height - ANCHOR_BOTTOM_RESERVE;
 
   /**
    * Vf, main 11767, verbatim:
@@ -2376,9 +2376,8 @@ function petSurface(host, data) {
           Math.abs(last.y - first.y) >= DRAG_THRESHOLD_PX));
 
     if (released && !moved) {
-      // Codex's mascot brings the app forward when it is clicked rather than
-      // dragged. Native focus also restores a minimized owner on the desktop.
-      if (desktop) host.focusOwner?.();
+      // Poking the mascot triggers the reaction animation without stealing OS focus
+      // or causing macOS to switch Spaces away from full-screen applications.
       host.send({ t: "poke" });
       if (pointerAt !== null) updatePointer(pointerAt.x, pointerAt.y);
       return;
@@ -5194,9 +5193,9 @@ async function desktopSurface(data) {
       script: petSurface,
       styles: ownStyles(),
       data: { ...data, desktop: true },
-      // The screen the menu bar is on, and its work area rather than its whole
-      // area, so the pet's floor is the top of the taskbar.
-      display: "primary"
+      // Open on the display nearest to cursor/active window, and adapt bounds
+      // so the pet can reach all corners of large external screens.
+      display: "cursor"
     });
   } catch (error) {
     handle = { ok: false, message: `${error?.message ?? error} — restart Antigravity if BetterGravity was just updated` };
