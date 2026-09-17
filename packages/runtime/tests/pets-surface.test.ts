@@ -875,4 +875,45 @@ describe("Pets inline task replies", () => {
     move(true);
     expect(pet.dataset.petBadge).toBe("visible");
   });
+
+  describe("accessories overlay", () => {
+    it("renders accessory element and defaults to none", () => {
+      mount();
+      const accessory = pet.querySelector<HTMLElement>(".bettergravity-pet__accessory");
+      expect(accessory).not.toBeNull();
+      expect(accessory?.getAttribute("aria-hidden")).toBe("true");
+      expect(pet.dataset.petAccessory).toBe("none");
+      expect(accessory?.hidden).toBe(true);
+      expect(accessory?.innerHTML).toBe("");
+    });
+
+    it.each(["party", "sunglasses", "crown", "wizard", "coffee"])(
+      "applies %s accessory from initial configuration",
+      (kind) => {
+        mount([], { accessory: kind });
+        const accessory = pet.querySelector<HTMLElement>(".bettergravity-pet__accessory");
+        expect(pet.dataset.petAccessory).toBe(kind);
+        expect(accessory?.hidden).toBe(false);
+        expect(accessory?.querySelector("svg")).not.toBeNull();
+        expect(accessory?.innerHTML).toContain("bettergravity-pet__accessory-svg");
+      }
+    );
+
+    it("updates accessory dynamically on config message", () => {
+      mount();
+      const accessory = pet.querySelector<HTMLElement>(".bettergravity-pet__accessory");
+      expect(pet.dataset.petAccessory).toBe("none");
+      expect(accessory?.hidden).toBe(true);
+
+      receive!({ t: "config", config: { accessory: "sunglasses" } });
+      expect(pet.dataset.petAccessory).toBe("sunglasses");
+      expect(accessory?.hidden).toBe(false);
+      expect(accessory?.querySelector("svg")).not.toBeNull();
+
+      receive!({ t: "config", config: { accessory: "none" } });
+      expect(pet.dataset.petAccessory).toBe("none");
+      expect(accessory?.hidden).toBe(true);
+      expect(accessory?.innerHTML).toBe("");
+    });
+  });
 });
