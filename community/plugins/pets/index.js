@@ -1217,10 +1217,13 @@ function petSurface(host, data) {
     halo: ACCESSORY_HALO
   };
 
+  const BAKED_ACCESSORIES = new Set(["puppy", "sword", "pumpkin", "santa", "halo"]);
+
   function applyAccessory() {
     const kind = config.accessory ?? "none";
     pet.dataset.petAccessory = kind;
-    const markup = ACCESSORIES[kind] ?? "";
+    const isRockyBaked = pet.dataset.pet === "rocky" && BAKED_ACCESSORIES.has(kind);
+    const markup = isRockyBaked ? "" : (ACCESSORIES[kind] ?? "");
     accessory.innerHTML = markup;
     accessory.hidden = markup.length === 0;
   }
@@ -4116,14 +4119,18 @@ const LIBRARY_ACCESSORIES = {
     "",
 };
 
+const BAKED_ACCESSORIES = new Set(["puppy", "sword", "pumpkin", "santa", "halo"]);
+
 function updatePreviewAccessory() {
   const preview = libraryRoot?.querySelector("#bettergravity-pet-preview");
   if (!preview) return;
   const kind = settings.accessory ?? "none";
+  preview.dataset.pet = selectedPet ? "custom" : "rocky";
   preview.dataset.petAccessory = kind;
   const acc = preview.querySelector(".bettergravity-pet__accessory");
   if (acc) {
-    const markup = LIBRARY_ACCESSORIES[kind] ?? "";
+    const isRockyBaked = (!selectedPet) && BAKED_ACCESSORIES.has(kind);
+    const markup = isRockyBaked ? "" : (LIBRARY_ACCESSORIES[kind] ?? "");
     acc.innerHTML = markup;
     acc.hidden = markup.length === 0;
   }
@@ -4179,6 +4186,7 @@ function renderPetPreview() {
   const preview = libraryElement("div", "bettergravity-pet-library__sprite");
   preview.id = "bettergravity-pet-preview";
   preview.setAttribute("role", "img");
+  preview.dataset.pet = selectedPet ? "custom" : "rocky";
   const previewAccessory = libraryElement("div", "bettergravity-pet__accessory");
   previewAccessory.setAttribute("aria-hidden", "true");
   preview.append(previewAccessory);
