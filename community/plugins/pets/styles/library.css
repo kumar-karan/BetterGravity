@@ -649,3 +649,20 @@ body.bettergravity-pets-open [role="navigation"][aria-label="Sidebar"] [data-tes
   transform: scaleX(-1);
 }
 
+
+/* Baked accessory sheets for preview */
+.bettergravity-pet-library__sprite[data-pet-accessory="santa"] {
+  background-image: url("../assets/rocky_santa.webp");
+}
+.bettergravity-pet-library__sprite[data-pet-accessory="puppy"] {
+  background-image: url("../assets/rocky_puppy.webp");
+}
+.bettergravity-pet-library__sprite[data-pet-accessory="sword"] {
+  background-image: url("../assets/rocky_sword.webp");
+}
+.bettergravity-pet-library__sprite[data-pet-accessory="pumpkin"] {
+  background-image: url("../assets/rocky_pumpkin.webp");
+}
+.bettergravity-pet-library__sprite[data-pet-accessory="halo"] {
+  background-image: url("../assets/rocky_halo.webp");
+}
