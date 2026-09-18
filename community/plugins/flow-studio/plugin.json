@@ -1,0 +1,9 @@
+{
+  "name": "Flow Studio",
+  "description": "Generate images and videos using Google Flow directly from the Antigravity sidebar. Select models (nano2, nano-pro, image4), aspect ratios, apply style presets, and browse your generation history.",
+  "version": "1.0.0",
+  "author": "Karan Kumar",
+  "main": "index.js",
+  "styles": "styles/flow-studio.css",
+  "source": "https://github.com/kumar-karan"
+}
