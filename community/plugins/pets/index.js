@@ -4117,12 +4117,16 @@ const LIBRARY_ACCESSORIES = {
 };
 
 function updatePreviewAccessory() {
-  const acc = libraryRoot?.querySelector("#bettergravity-pet-preview .bettergravity-pet__accessory");
-  if (!acc) return;
+  const preview = libraryRoot?.querySelector("#bettergravity-pet-preview");
+  if (!preview) return;
   const kind = settings.accessory ?? "none";
-  const markup = LIBRARY_ACCESSORIES[kind] ?? "";
-  acc.innerHTML = markup;
-  acc.hidden = markup.length === 0;
+  preview.dataset.petAccessory = kind;
+  const acc = preview.querySelector(".bettergravity-pet__accessory");
+  if (acc) {
+    const markup = LIBRARY_ACCESSORIES[kind] ?? "";
+    acc.innerHTML = markup;
+    acc.hidden = markup.length === 0;
+  }
 }
 
 function paintPetPreview() {
