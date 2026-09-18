@@ -1,0 +1,662 @@
+/* ===========================================================================
+ * BetterGravity Flow Studio Stylesheet
+ * Option 4: Split Workstation Pro (Adaptive Main & Sidebar Layout)
+ * Strictly following native Antigravity theme & design tokens
+ * =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+ * 1. Viewport Positioning & Sibling Masking
+ * ------------------------------------------------------------------------- */
+[data-flow-page-host][data-flow-page-positioned] {
+  position: relative !important;
+}
+
+[data-flow-page-hidden],
+[data-flow-page-hidden] * {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Top Sidebar Navigation - Combined Option 1 (Seamless Ghost) + Option 6 (Stealth Dark)
+ * Completely outline-free, dimmed stealth inactive tone, clean #333537 active pill
+ * ------------------------------------------------------------------------- */
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"],
+[data-bettergravity-button="Flow Studio"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 9999px !important;
+  color: var(--gemini-text-dim, #9aa0a6) !important;
+  font-family: var(--bettergravity-font, var(--gemini-font, "Google Sans Flex", "Google Sans", sans-serif)) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  box-sizing: border-box !important;
+  transition: background-color 140ms ease, color 140ms ease !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"] > svg,
+[data-bettergravity-button="Flow Studio"] > svg {
+  color: #80868b !important;
+  transition: color 140ms ease, transform 140ms ease !important;
+}
+
+/* Hover: Brightens icon and text with soft translucent wash */
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"]:hover,
+[data-bettergravity-button="Flow Studio"]:hover {
+  background: var(--bettergravity-row-hover, var(--gemini-row-hover, rgba(255, 255, 255, 0.08))) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"]:hover > svg,
+[data-bettergravity-button="Flow Studio"]:hover > svg {
+  color: #ffffff !important;
+}
+
+/* Active State: Option 1 & 6 combination — Solid stealth #333537 pill, pure white text/icon, zero outline */
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"][aria-pressed="true"],
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"].is-active,
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"][data-active="true"],
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"][data-bettergravity-active="true"],
+[data-bettergravity-button="Flow Studio"][aria-pressed="true"],
+[data-bettergravity-button="Flow Studio"].is-active,
+[data-bettergravity-button="Flow Studio"][data-active="true"] {
+  background: #333537 !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"][aria-pressed="true"] > svg,
+[data-bettergravity-button="Flow Studio"][aria-pressed="true"] > svg {
+  color: #ffffff !important;
+}
+
+[data-bettergravity-button="Flow Studio"]:active > svg {
+  transform: scale(0.92);
+}
+
+[role="navigation"][aria-label="Sidebar"] button[type="button"][data-bettergravity-button="Flow Studio"] {
+  height: 32px !important;
+  min-height: 32px !important;
+  width: 100% !important;
+  margin: 1px 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  font-variation-settings: var(--gemini-font-axes, "ROND" 0, "slnt" 0, "wdth" 92, "wght" 400) !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"] > svg {
+  box-sizing: border-box !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"] > span {
+  margin-left: 6px !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+[role="navigation"][aria-label="Sidebar"][data-collapsed="true"] button[type="button"][data-bettergravity-button="Flow Studio"] {
+  width: 32px !important;
+  justify-content: center !important;
+  padding-inline: 0 !important;
+}
+
+[role="navigation"][aria-label="Sidebar"][data-collapsed="true"] [data-bettergravity-button="Flow Studio"] > span {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Outline-Free Consistency across all sidebar action buttons
+ * Removes hard borders and applies matching stealth ghost treatments
+ * ------------------------------------------------------------------------- */
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"],
+[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button,
+[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"],
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"] {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 9999px !important;
+  margin: 1px 0 !important;
+  box-sizing: border-box !important;
+  color: var(--gemini-text-dim, #9aa0a6) !important;
+  transition: background-color 140ms ease, color 140ms ease !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"] > svg,
+[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button > svg,
+[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"] > svg,
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"] > svg {
+  color: #80868b !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"]:hover,
+[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button:hover,
+[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"]:hover,
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"]:hover {
+  background: var(--bettergravity-row-hover, var(--gemini-row-hover, rgba(255, 255, 255, 0.08))) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"]:hover > svg,
+[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button:hover > svg,
+[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"]:hover > svg,
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"]:hover > svg {
+  color: #ffffff !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"][aria-pressed="true"],
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"][aria-pressed="true"] {
+  background: #333537 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"][aria-pressed="true"] > svg,
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"][aria-pressed="true"] > svg {
+  color: #ffffff !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Main Studio Viewport (Native Antigravity Surface)
+ * ------------------------------------------------------------------------- */
+.bettergravity-flow-studio-page,
+.bettergravity-flow-studio-page * {
+  box-sizing: border-box;
+}
+
+.bettergravity-flow-studio-page {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  padding: 40px 0 64px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--studio-surface, #0f0f0f);
+  color: #e3e3e3;
+  font-family: var(--bettergravity-font, var(--gemini-font, "Google Sans Flex", "Google Sans", "Helvetica Neue", sans-serif));
+  letter-spacing: 0;
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+  container-type: inline-size;
+}
+
+.bettergravity-flow-studio {
+  width: min(880px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Minimal Header & Action Bar
+ * ------------------------------------------------------------------------- */
+.flow-studio__header {
+  margin-bottom: 8px;
+}
+
+.flow-studio__header h1 {
+  margin: 0;
+  padding: 4px 8px 4px 16px;
+  color: #e3e3e3;
+  font-size: 28px;
+  font-weight: 350;
+  font-variation-settings: "ROND" 20, "slnt" 0, "wdth" 100, "wght" 350;
+  line-height: 36px;
+  outline: none;
+}
+
+.flow-studio__header p {
+  margin: 0;
+  padding: 0 16px;
+  color: #c4c7c5;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.flow-studio__actions {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 0 8px;
+}
+
+.flow-studio__button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  background: #171717;
+  color: #e6e6e6;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 140ms ease;
+}
+
+.flow-studio__button:hover:not(:disabled) {
+  background: #242424;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.flow-studio__button.is-primary {
+  background: var(--spark-accent, #1f3b9b);
+  border-color: transparent;
+  color: #fff;
+}
+
+.flow-studio__button.is-primary:hover:not(:disabled) {
+  background: var(--spark-accent-hover, #2c48a8);
+}
+
+.flow-studio__button.is-quiet {
+  background: transparent;
+  border-color: transparent;
+}
+
+.flow-studio__button.is-quiet:hover:not(:disabled) {
+  background: rgba(230, 230, 230, 0.08);
+}
+
+.flow-studio__button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. OPTION 4: Split Workstation Pro (Adaptive 2-Column / 1-Column)
+ * ------------------------------------------------------------------------- */
+.flow-studio__workstation {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 20px;
+  padding: 0 8px;
+}
+
+@media (min-width: 740px) {
+  .flow-studio__workstation {
+    grid-template-columns: 340px minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+  }
+}
+
+@container (min-width: 700px) {
+  .flow-studio__workstation {
+    grid-template-columns: 340px minmax(0, 1fr);
+    align-items: start;
+    gap: 28px;
+  }
+}
+
+/* Left Column: Controls & Parameters */
+.flow-studio__controls-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.flow-studio__group-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+/* Model Engine Cards (Option 4 Signature) */
+.flow-studio__model-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-studio__model-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 140ms ease;
+  user-select: none;
+}
+
+.flow-studio__model-card:hover {
+  background: #222222;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.flow-studio__model-card.is-selected {
+  background: rgba(138, 180, 248, 0.12);
+  border-color: #8ab4f8;
+}
+
+.flow-studio__model-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flow-studio__model-name {
+  font-size: 13px;
+  font-weight: 550;
+  color: #ffffff;
+}
+
+.flow-studio__model-card.is-selected .flow-studio__model-name {
+  color: #a8c7fa;
+}
+
+.flow-studio__model-desc {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.flow-studio__model-check {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8ab4f8;
+  width: 20px;
+  text-align: right;
+}
+
+/* Aspect Ratio Pills */
+.flow-studio__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.flow-studio__chip {
+  appearance: none;
+  background: #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  color: #cbd5e1;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 450;
+  cursor: pointer;
+  user-select: none;
+  transition: all 140ms ease;
+}
+
+.flow-studio__chip:hover {
+  background: #242424;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.flow-studio__chip.is-selected {
+  background: rgba(138, 180, 248, 0.14);
+  border-color: #8ab4f8;
+  color: #a8c7fa;
+  font-weight: 500;
+}
+
+/* Prompt Textarea */
+.flow-studio__input-box {
+  position: relative;
+  background: #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  transition: border-color 140ms ease;
+}
+
+.flow-studio__input-box:focus-within {
+  border-color: #8ab4f8;
+}
+
+.flow-studio__textarea {
+  width: 100%;
+  min-height: 80px;
+  background: transparent;
+  border: 0;
+  color: #e6e6e6;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 20px;
+  resize: vertical;
+  outline: none;
+}
+
+.flow-studio__textarea::placeholder {
+  color: #64748b;
+}
+
+/* Right Column: Canvas Stage & Command Output */
+.flow-studio__canvas-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 20px 16px;
+}
+
+.flow-studio__stage-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.flow-studio__frame {
+  position: relative;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 240ms cubic-bezier(0.2, 0, 0, 1), height 240ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.flow-studio__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.flow-studio__badge {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 600;
+  color: #a8c7fa;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+.flow-studio__caption {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+  max-width: 360px;
+  margin-top: 10px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Command Strip with Monospace Code */
+.flow-studio__command-strip {
+  width: 100%;
+  background: #0d0e11;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.flow-studio__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  color: #81c995;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Creations History List (Exact Native Pets Parity)
+ * ------------------------------------------------------------------------- */
+.flow-studio__available {
+  margin-top: 32px;
+  padding: 0 8px;
+}
+
+.flow-studio__available > h2 {
+  margin: 0 0 12px 8px;
+  color: #e3e3e3;
+  font-size: 15px;
+  font-weight: 540;
+  line-height: 24px;
+}
+
+.flow-studio__list {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.flow-studio__row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: #171717;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 140ms ease;
+}
+
+.flow-studio__row:last-child {
+  border-bottom: 0;
+}
+
+.flow-studio__row:hover {
+  background: color-mix(in srgb, #e6e6e6 6%, #171717);
+}
+
+.flow-studio__thumbnail {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.flow-studio__thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.flow-studio__details {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flow-studio__details strong {
+  color: #e3e3e3;
+  font-size: 14px;
+  font-weight: 540;
+  line-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-studio__details span {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Custom sidebar icon for Flow Studio */
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"] > svg {
+  background-image: url("../assets/logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-sizing: border-box; 
+  width: 32px; 
+  height: 32px; 
+  padding: 6px;
+  background-origin: content-box;
+  background-clip: content-box;
+  mix-blend-mode: screen;
+  color: transparent !important;
+}
+
+[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Flow Studio"] > svg > path {
+  display: none;
+}

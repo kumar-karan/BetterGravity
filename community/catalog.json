@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-18T02:12:17.299Z",
+  "generatedAt": "2026-09-18T04:35:08.906Z",
   "entries": [
     {
       "id": "computer-use",
@@ -243,6 +243,54 @@
           "name": "plugin.json",
           "bytes": 286,
           "sha256": "1e854c6cfc78478c68dfd4b7f66160bb675722e6cfb5e6b81fcf871d71a1b729"
+        }
+      ]
+    },
+    {
+      "id": "flow-studio",
+      "kind": "plugin",
+      "name": "Flow Studio",
+      "description": "Generate images and videos using Google Flow directly from the Antigravity sidebar. Select models (nano2, nano-pro, image4), aspect ratios, apply style presets, and browse your generation history.",
+      "version": "1.0.0",
+      "author": "Karan Kumar",
+      "source": "https://github.com/kumar-karan",
+      "path": "community/plugins/flow-studio",
+      "bytes": 945973,
+      "files": [
+        {
+          "name": "assets/logo.png",
+          "bytes": 95856,
+          "sha256": "194ccb5f8e5a8b88df2e6d806c6ed07520e01793a5507c39d25815b18d8e9129"
+        },
+        {
+          "name": "assets/neon_cube.jpg",
+          "bytes": 127412,
+          "sha256": "5ec15d507ebcd85e28f4c3a97291d011360b3b7cec56adfbea2a20e9bbe6eb75"
+        },
+        {
+          "name": "assets/prof_chonks_idle.gif",
+          "bytes": 96956,
+          "sha256": "4104fd88b7f42b08851c8341d0607ecc2f92adb7ce21c8e6fc51998611bfd248"
+        },
+        {
+          "name": "assets/prof_chonks.png",
+          "bytes": 586405,
+          "sha256": "2a0146a4cd2e8ff6398695d6065095b0932ada4b9c9f5c99aaf91d0a23c8f790"
+        },
+        {
+          "name": "index.js",
+          "bytes": 20794,
+          "sha256": "ac50cf97dfefe062375dde32a36fd74fbac14df2f4ded3d8f9adf98ce5a852a8"
+        },
+        {
+          "name": "plugin.json",
+          "bytes": 400,
+          "sha256": "b280554659681b37d56eeef844c8d65869bc8a4b25c9c9647600b6d962c27cbf"
+        },
+        {
+          "name": "styles/flow-studio.css",
+          "bytes": 18150,
+          "sha256": "0aee649b280f8ff450be166cd5ee31fbf8156510934659925d1f15d9c2216996"
         }
       ]
     },
@@ -707,17 +755,42 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/pets",
-      "bytes": 1577742,
+      "bytes": 2720109,
       "files": [
         {
+          "name": "assets/rocky_halo.webp",
+          "bytes": 372042,
+          "sha256": "d9959b58d98dc0fccd9c9c87709d118b9074b38af34bdf672e053d1c32f65042"
+        },
+        {
+          "name": "assets/rocky_pumpkin.webp",
+          "bytes": 376234,
+          "sha256": "ce01ca399335e61e2b30251c45f3a59e278add341eb13a59a4236293f318d646"
+        },
+        {
+          "name": "assets/rocky_puppy.webp",
+          "bytes": 333814,
+          "sha256": "b9a935e5b88c15bd32535e687cef7e97eb4abe284e2b21f749b7a6e991cff317"
+        },
+        {
+          "name": "assets/rocky_santa.webp",
+          "bytes": 356062,
+          "sha256": "cd31f1598a3366472e1dd9f5aec359d71c02ca2c91ad7c2b0870e7902c9c6ccd"
+        },
+        {
+          "name": "assets/rocky_sword.webp",
+          "bytes": 347206,
+          "sha256": "760bf55b5edbb72c5ef32f1c8d3b5a1ce49b83ed7c2a2d272808b56403e04050"
+        },
+        {
           "name": "assets/rocky.webp",
-          "bytes": 978516,
-          "sha256": "81970d728fb0a024385298c47dd9128ee18e9eb9d1db84ccacd42edea9f3bd6a"
+          "bytes": 338040,
+          "sha256": "86a4eb0009ec5c75e0134d13ac03acd8810e928c1926a6b11de28c10580efdbe"
         },
         {
           "name": "index.js",
-          "bytes": 321227,
-          "sha256": "91547f7a770bff5ce6fff9b044ce7139df3c2c84175a4beffc159574ad9c49ee"
+          "bytes": 317456,
+          "sha256": "ae0953f2a4e678008fffb6566951e908a9d7b6dfb2bdc42e8ee0b422a85f0841"
         },
         {
           "name": "plugin.json",
@@ -856,13 +929,13 @@
         },
         {
           "name": "styles/library.css",
-          "bytes": 24184,
-          "sha256": "baa744c263b2106c869152350e67105102026dfab1c9e6025702bd74f01e9240"
+          "bytes": 24838,
+          "sha256": "b4f0fa9bb5b501b673fbba83e225f18c253866f1138d3b1cc32ac69a89766827"
         },
         {
           "name": "styles/pet.css",
-          "bytes": 5735,
-          "sha256": "682714b9b5b36e8affe8396f3399815bc32f5dc476e1992357bc3bf665d34f52"
+          "bytes": 6337,
+          "sha256": "99e426b9cb58576072f198196f6284979cb4841fe4dfb1f9924ba8a4ecdca86c"
         }
       ]
     },
