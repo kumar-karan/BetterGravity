@@ -1143,6 +1143,65 @@ function petSurface(host, data) {
     '<circle cx="94" cy="44" r="1.8" fill="#ffffff" opacity="0.85"/>' +
     '</svg>';
 
+  const ACCESSORY_PUPPY =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<ellipse cx="76" cy="96" rx="14" ry="16" fill="#111111"/>' +
+    '<circle cx="72" cy="90" r="5" fill="#ffffff"/>' +
+    '<circle cx="82" cy="100" r="2" fill="#ffffff"/>' +
+    '<ellipse cx="116" cy="96" rx="14" ry="16" fill="#111111"/>' +
+    '<circle cx="112" cy="90" r="5" fill="#ffffff"/>' +
+    '<circle cx="122" cy="100" r="2" fill="#ffffff"/>' +
+    '<ellipse cx="60" cy="108" rx="8" ry="4" fill="#ff7675" opacity="0.6"/>' +
+    '<ellipse cx="132" cy="108" rx="8" ry="4" fill="#ff7675" opacity="0.6"/>' +
+    '</svg>';
+
+  const ACCESSORY_SWORD =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-sword-blade" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#dfe6e9"/>' +
+    '<stop offset="100%" stop-color="#b2bec3"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 147 132 L 140 70 L 147 55 L 154 70 Z" fill="url(#bg-pet-sword-blade)" stroke="#636e72" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<rect x="135" y="132" width="24" height="6" rx="2" fill="#f1c40f" stroke="#d35400" stroke-width="1.5"/>' +
+    '<rect x="144" y="138" width="6" height="18" fill="#8e44ad" stroke="#2c3e50" stroke-width="1.5"/>' +
+    '<circle cx="147" cy="158" r="4" fill="#f1c40f" stroke="#d35400" stroke-width="1.5"/>' +
+    '</svg>';
+
+  const ACCESSORY_PUMPKIN =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-pet-pumpkin" x1="0%" y1="0%" x2="0%" y2="100%">' +
+    '<stop offset="0%" stop-color="#ff9f43"/>' +
+    '<stop offset="100%" stop-color="#ee5253"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 96 16 C 96 10 90 6 86 8 C 88 12 91 14 91 18 Z" fill="#10ac84" stroke="#01a3a4" stroke-width="1.5"/>' +
+    '<ellipse cx="96" cy="35" rx="30" ry="20" fill="url(#bg-pet-pumpkin)" stroke="#c8d6e5" stroke-width="0"/>' +
+    '<ellipse cx="96" cy="35" rx="20" ry="20" fill="none" stroke="#d35400" stroke-width="1.5" opacity="0.6"/>' +
+    '<ellipse cx="96" cy="35" rx="10" ry="20" fill="none" stroke="#d35400" stroke-width="1.5" opacity="0.6"/>' +
+    '<ellipse cx="96" cy="35" rx="30" ry="20" fill="none" stroke="#d35400" stroke-width="2"/>' +
+    '<path d="M 82 30 L 88 36 L 76 36 Z" fill="#feca57"/>' +
+    '<path d="M 110 30 L 116 36 L 104 36 Z" fill="#feca57"/>' +
+    '<path d="M 80 44 L 85 48 L 90 44 L 96 48 L 102 44 L 107 48 L 112 44" fill="none" stroke="#feca57" stroke-width="2.5" stroke-linecap="round"/>' +
+    '</svg>';
+
+  const ACCESSORY_SANTA =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M 64 54 C 64 30 84 10 110 20 C 130 30 135 60 130 80 C 125 90 115 90 115 80 C 115 50 100 40 90 40 C 70 40 70 54 70 54 Z" fill="#ff4757" stroke="#c0392b" stroke-width="2" stroke-linejoin="round"/>' +
+    '<rect x="60" y="48" width="72" height="14" rx="7" fill="#ffffff" stroke="#dfe6e9" stroke-width="2"/>' +
+    '<circle cx="122" cy="85" r="10" fill="#ffffff" stroke="#dfe6e9" stroke-width="2"/>' +
+    '</svg>';
+
+  const ACCESSORY_HALO =
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<ellipse cx="96" cy="20" rx="30" ry="10" fill="none" stroke="#feca57" stroke-width="4" opacity="0.8"/>' +
+    '<ellipse cx="96" cy="20" rx="30" ry="10" fill="none" stroke="#ffffff" stroke-width="2"/>' +
+    '<path d="M 50 15 L 53 10 L 56 15 L 53 20 Z" fill="#feca57"/>' +
+    '<path d="M 140 10 L 142 6 L 144 10 L 142 14 Z" fill="#feca57"/>' +
+    '</svg>';
+
   const ACCESSORIES = {
     none: "",
     party: ACCESSORY_PARTY_HAT,
@@ -1150,7 +1209,12 @@ function petSurface(host, data) {
     crown: ACCESSORY_CROWN,
     wizard: ACCESSORY_WIZARD,
     coffee: ACCESSORY_COFFEE,
-    bow: ACCESSORY_BOW
+    bow: ACCESSORY_BOW,
+    puppy: ACCESSORY_PUPPY,
+    sword: ACCESSORY_SWORD,
+    pumpkin: ACCESSORY_PUMPKIN,
+    santa: ACCESSORY_SANTA,
+    halo: ACCESSORY_HALO
   };
 
   function applyAccessory() {
@@ -3668,7 +3732,12 @@ const settings = plugin.settings.define({
       { value: "crown", label: "👑 Golden Crown" },
       { value: "wizard", label: "🧙 Wizard Hat" },
       { value: "coffee", label: "☕ Steaming Coffee" },
-      { value: "bow", label: "🎀 Red Bow" }
+      { value: "bow", label: "🎀 Red Bow" },
+      { value: "puppy", label: "🥺 Puppy Eyes" },
+      { value: "sword", label: "🗡️ Tiny Sword" },
+      { value: "pumpkin", label: "🎃 Pumpkin Hat" },
+      { value: "santa", label: "🎅 Santa Hat" },
+      { value: "halo", label: "👼 Angel Halo" }
     ]
   },
   sheet: {
@@ -4034,6 +4103,60 @@ const LIBRARY_ACCESSORIES = {
     '<path d="M 105 37 C 114 37 121 39 123 43" stroke="#ffa8b6" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
     '<rect x="90" y="40" width="12" height="13" rx="4" fill="#ff4757" stroke="#6b1414" stroke-width="1.8"/>' +
     '<circle cx="94" cy="44" r="1.8" fill="#ffffff" opacity="0.85"/>' +
+    '</svg>',
+  puppy:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<ellipse cx="76" cy="96" rx="14" ry="16" fill="#111111"/>' +
+    '<circle cx="72" cy="90" r="5" fill="#ffffff"/>' +
+    '<circle cx="82" cy="100" r="2" fill="#ffffff"/>' +
+    '<ellipse cx="116" cy="96" rx="14" ry="16" fill="#111111"/>' +
+    '<circle cx="112" cy="90" r="5" fill="#ffffff"/>' +
+    '<circle cx="122" cy="100" r="2" fill="#ffffff"/>' +
+    '<ellipse cx="60" cy="108" rx="8" ry="4" fill="#ff7675" opacity="0.6"/>' +
+    '<ellipse cx="132" cy="108" rx="8" ry="4" fill="#ff7675" opacity="0.6"/>' +
+    '</svg>',
+  sword:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-lib-pet-sword-blade" x1="0%" y1="0%" x2="100%" y2="100%">' +
+    '<stop offset="0%" stop-color="#dfe6e9"/>' +
+    '<stop offset="100%" stop-color="#b2bec3"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 147 132 L 140 70 L 147 55 L 154 70 Z" fill="url(#bg-lib-pet-sword-blade)" stroke="#636e72" stroke-width="1.5" stroke-linejoin="round"/>' +
+    '<rect x="135" y="132" width="24" height="6" rx="2" fill="#f1c40f" stroke="#d35400" stroke-width="1.5"/>' +
+    '<rect x="144" y="138" width="6" height="18" fill="#8e44ad" stroke="#2c3e50" stroke-width="1.5"/>' +
+    '<circle cx="147" cy="158" r="4" fill="#f1c40f" stroke="#d35400" stroke-width="1.5"/>' +
+    '</svg>',
+  pumpkin:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="bg-lib-pet-pumpkin" x1="0%" y1="0%" x2="0%" y2="100%">' +
+    '<stop offset="0%" stop-color="#ff9f43"/>' +
+    '<stop offset="100%" stop-color="#ee5253"/>' +
+    '</linearGradient>' +
+    '</defs>' +
+    '<path d="M 96 16 C 96 10 90 6 86 8 C 88 12 91 14 91 18 Z" fill="#10ac84" stroke="#01a3a4" stroke-width="1.5"/>' +
+    '<ellipse cx="96" cy="35" rx="30" ry="20" fill="url(#bg-lib-pet-pumpkin)" stroke="#c8d6e5" stroke-width="0"/>' +
+    '<ellipse cx="96" cy="35" rx="20" ry="20" fill="none" stroke="#d35400" stroke-width="1.5" opacity="0.6"/>' +
+    '<ellipse cx="96" cy="35" rx="10" ry="20" fill="none" stroke="#d35400" stroke-width="1.5" opacity="0.6"/>' +
+    '<ellipse cx="96" cy="35" rx="30" ry="20" fill="none" stroke="#d35400" stroke-width="2"/>' +
+    '<path d="M 82 30 L 88 36 L 76 36 Z" fill="#feca57"/>' +
+    '<path d="M 110 30 L 116 36 L 104 36 Z" fill="#feca57"/>' +
+    '<path d="M 80 44 L 85 48 L 90 44 L 96 48 L 102 44 L 107 48 L 112 44" fill="none" stroke="#feca57" stroke-width="2.5" stroke-linecap="round"/>' +
+    '</svg>',
+  santa:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<path d="M 64 54 C 64 30 84 10 110 20 C 130 30 135 60 130 80 C 125 90 115 90 115 80 C 115 50 100 40 90 40 C 70 40 70 54 70 54 Z" fill="#ff4757" stroke="#c0392b" stroke-width="2" stroke-linejoin="round"/>' +
+    '<rect x="60" y="48" width="72" height="14" rx="7" fill="#ffffff" stroke="#dfe6e9" stroke-width="2"/>' +
+    '<circle cx="122" cy="85" r="10" fill="#ffffff" stroke="#dfe6e9" stroke-width="2"/>' +
+    '</svg>',
+  halo:
+    '<svg class="bettergravity-pet__accessory-svg" viewBox="0 0 192 208" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<ellipse cx="96" cy="20" rx="30" ry="10" fill="none" stroke="#feca57" stroke-width="4" opacity="0.8"/>' +
+    '<ellipse cx="96" cy="20" rx="30" ry="10" fill="none" stroke="#ffffff" stroke-width="2"/>' +
+    '<path d="M 50 15 L 53 10 L 56 15 L 53 20 Z" fill="#feca57"/>' +
+    '<path d="M 140 10 L 142 6 L 144 10 L 142 14 Z" fill="#feca57"/>' +
     '</svg>'
 };
 
@@ -4372,7 +4495,12 @@ function renderPetSettingsSection() {
     { value: "crown", label: "👑 Golden Crown" },
     { value: "wizard", label: "🧙 Wizard Hat" },
     { value: "coffee", label: "☕ Steaming Coffee" },
-    { value: "bow", label: "🎀 Red Bow" }
+    { value: "bow", label: "🎀 Red Bow" },
+    { value: "puppy", label: "🥺 Puppy Eyes" },
+    { value: "sword", label: "🗡️ Tiny Sword" },
+    { value: "pumpkin", label: "🎃 Pumpkin Hat" },
+    { value: "santa", label: "🎅 Santa Hat" },
+    { value: "halo", label: "👼 Angel Halo" }
   ];
   group1.append(createSettingSelectRow(
     "Hat & Accessory",
