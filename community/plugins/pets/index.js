@@ -1932,7 +1932,8 @@ function petSurface(host, data) {
 
     // Bi()'s `hasNotifications`: what the pill offers to do depends on whether
     // there is anything in the tray under it.
-    chatInput.placeholder = total > 0 ? "Start new chat" : "Ask";
+    const pName = config.petName || "Pet";
+    chatInput.placeholder = total > 0 ? `Ask ${pName} or add a TODO...` : `Ask ${pName}...`;
 
     tray.dataset.petStack = stackExpanded ? "expanded" : "collapsed";
 
@@ -2747,8 +2748,10 @@ function petSurface(host, data) {
           Math.abs(last.y - first.y) >= DRAG_THRESHOLD_PX));
 
     if (released && !moved) {
-      // Poking the mascot triggers the reaction animation without stealing OS focus
-      // or causing macOS to switch Spaces away from full-screen applications.
+      // Poking the mascot triggers a reaction cheer and opens the quick chat pill
+      cheer("jumping", 1500);
+      chatOpen = true;
+      renderCluster();
       host.send({ t: "poke" });
       if (pointerAt !== null) updatePointer(pointerAt.x, pointerAt.y);
       scheduleWander();
@@ -3710,6 +3713,18 @@ const settings = plugin.settings.define({
     label: "Stand & stretch reminder",
     description: "Remind you to stand up, roll shoulders, and look 20 feet away.",
     default: "60",
+    options: [
+      { value: "30", label: "Every 30 minutes" },
+      { value: "45", label: "Every 45 minutes" },
+      { value: "60", label: "Every 60 minutes" },
+      { value: "off", label: "Off" }
+    ]
+  },
+  taskReminder: {
+    type: "select",
+    label: "Task check-ins & focus",
+    description: "Pet displays your active focus task and checks in periodically to see if you finished or need help.",
+    default: "45",
     options: [
       { value: "30", label: "Every 30 minutes" },
       { value: "45", label: "Every 45 minutes" },
@@ -6344,6 +6359,58 @@ function checkWellness(isWorking) {
   }
 }
 
+function getActiveTasks() {
+  try {
+    const raw = typeof window !== "undefined" && window.localStorage?.getItem("bettergravity:tasks");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  try {
+    const list = plugin.storage.get("tasksList", []);
+    if (Array.isArray(list) && list.length > 0) return list;
+  } catch {}
+  return [];
+}
+
+function getActiveFocusTask() {
+  const tasks = getActiveTasks();
+  const pending = tasks.filter((t) => t && t.status !== "done");
+  if (pending.length === 0) return null;
+  const prioWeight = { p0: 0, p1: 1, p2: 2, p3: 3 };
+  pending.sort((a, b) => (prioWeight[a.priority] ?? 2) - (prioWeight[b.priority] ?? 2));
+  return pending[0];
+}
+
+let taskCheckinCard = null;
+
+function checkTaskReminders(isWorking) {
+  const taskSetting = settings.taskReminder ?? "45";
+  if (taskSetting === "off") return;
+  const taskMin = parseInt(taskSetting, 10);
+  if (isNaN(taskMin) || taskMin <= 0) return;
+
+  const now = Date.now();
+  const focus = getActiveFocusTask();
+
+  if (focus) {
+    const targetSec = taskMin * 60;
+    if (activeWaterWorkSec >= targetSec && taskCheckinCard === null && !dismissed.has("task-checkin-" + focus.id)) {
+      taskCheckinCard = {
+        key: "task-checkin-" + focus.id,
+        status: "wellness",
+        title: "⏱️ Working on: " + focus.title.slice(0, 32),
+        subtitle: "Still on it or ready to check off?",
+        place: Number.MAX_SAFE_INTEGER - 3,
+        sortAtMs: now,
+        updatedAtMs: now
+      };
+      surface?.send({ t: "cheer", state: "waving" });
+    }
+  }
+}
+
 /** Codex's latestActivityFirst normalizes session priority before comparing
  * recency. Status still controls each card's tone and the attention badge. */
 function activityOf() {
@@ -6373,6 +6440,37 @@ function activityOf() {
   }
   if (wellnessStretchCard !== null && !dismissed.has("wellness-stretch")) {
     entries.push(wellnessStretchCard);
+  }
+
+  checkTaskReminders(working);
+  if (taskCheckinCard !== null && !dismissed.has(taskCheckinCard.key)) {
+    entries.push(taskCheckinCard);
+  } else {
+    const allTasks = getActiveTasks();
+    const focus = getActiveFocusTask();
+    const petName = selectedPet?.displayName || (selectedPetId ? selectedPetId.charAt(0).toUpperCase() + selectedPetId.slice(1) : "Pet");
+    if (focus && !dismissed.has("task-focus-" + focus.id)) {
+      const prio = (focus.priority || "p2").toUpperCase();
+      entries.push({
+        key: "task-focus-" + focus.id,
+        status: "wellness",
+        title: "📌 " + focus.title,
+        subtitle: `[${prio}] ${focus.category || "Task"} · Click ✓ to finish!`,
+        place: Number.MAX_SAFE_INTEGER - 3,
+        sortAtMs: now,
+        updatedAtMs: now
+      });
+    } else if (allTasks.length > 0 && !dismissed.has("task-companion-plan")) {
+      entries.push({
+        key: "task-companion-plan",
+        status: "wellness",
+        title: "✨ All tasks caught up!",
+        subtitle: `Click to plan or add a TODO with ${petName}!`,
+        place: Number.MAX_SAFE_INTEGER - 3,
+        sortAtMs: now,
+        updatedAtMs: now
+      });
+    }
   }
 
   entries.sort(
@@ -6435,7 +6533,7 @@ function windowSurface(data) {
 
   petSurface(
     {
-      send: (message) => fromSurface(message),
+      send: (message) => fromSurface({ ...message, surfaceWhere: "window" }),
       setInteractive: () => undefined,
       setFocusable: () => undefined,
       onMessage: (listener) => {
@@ -6513,7 +6611,7 @@ async function desktopSurface(data) {
         resolve(message);
         return;
       }
-      fromSurface(message);
+      fromSurface({ ...message, surfaceWhere: "desktop" });
     });
   });
 
@@ -6572,7 +6670,8 @@ const configOf = () => ({
   roam: settings.roam ?? "chill",
   waterReminder: settings.waterReminder ?? "45",
   stretchReminder: settings.stretchReminder ?? "60",
-  accessory: settings.accessory ?? "none"
+  accessory: settings.accessory ?? "none",
+  petName: selectedPet?.displayName || (selectedPetId ? selectedPetId.charAt(0).toUpperCase() + selectedPetId.slice(1) : "Rocky")
 });
 
 /** Focus the host renderer after the desktop surface raises its native window. */
@@ -6913,6 +7012,41 @@ async function stopThread(key) {
  * concerned, and two seconds of it sitting there would read as a dead button.
  */
 function dismiss(key) {
+  if (key.startsWith("task-focus-")) {
+    const taskId = key.replace("task-focus-", "");
+    const all = getActiveTasks();
+    const target = all.find((t) => t.id === taskId);
+    if (target) {
+      target.status = "done";
+      target.completedAt = new Date().toISOString();
+      target.updatedAt = new Date().toISOString();
+      plugin.storage.set("tasksList", all);
+      try {
+        window.localStorage?.setItem("bettergravity:tasks", JSON.stringify(all));
+        window.dispatchEvent(new CustomEvent("bettergravity:tasks-updated", { detail: all }));
+      } catch {}
+      surface?.send({ t: "cheer", state: "jumping" });
+    }
+    dismissed.set(key, Date.now());
+    const next = activityOf();
+    activity = next.entries;
+    signature = signatureOf(activity, working);
+    surface?.send({ t: "activity", entries: activity, working });
+    return;
+  }
+  if (key === "task-companion-plan") {
+    dismissed.set(key, Date.now());
+    openTaskCompanionChat();
+    return;
+  }
+  if (key.startsWith("task-checkin-")) {
+    taskCheckinCard = null;
+    dismissed.set(key, Date.now());
+    activity = activity.filter((item) => item.key !== key);
+    signature = signatureOf(activity, working);
+    surface?.send({ t: "activity", entries: activity, working });
+    return;
+  }
   if (key === "wellness-water" || key === "wellness-stretch") {
     if (key === "wellness-water") {
       wellnessWaterCard = null;
@@ -6935,6 +7069,41 @@ function dismiss(key) {
   signature = signatureOf(activity, working);
   surface?.send({ t: "activity", entries: activity, working });
 }
+
+function openTaskCompanionChat() {
+  const petName = selectedPet?.displayName || (selectedPetId ? selectedPetId.charAt(0).toUpperCase() + selectedPetId.slice(1) : "Pet");
+  const focus = getActiveFocusTask();
+  void newConversation().then(() => {
+    return waitForComposer(() => projectlessHome(true));
+  }).then((field) => {
+    if (!field) return;
+    const taskContext = focus
+      ? `Our current focus task is "${focus.title}" (${(focus.priority || "P2").toUpperCase()}, ${focus.category || "General"}).`
+      : `We currently have no active tasks on our board.`;
+    const prompt = `[Task Companion: ${petName}] Hey ${petName}! Let's review, plan, and organize our tasks. ${taskContext} Please interview me, ask what deliverables we should tackle or check off next, and update our task board!`;
+    if ("value" in field) {
+      field.value = prompt;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    } else {
+      field.textContent = prompt;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    field.focus();
+  });
+}
+
+window.addEventListener("bettergravity:pet-cheer", () => {
+  surface?.send({ t: "cheer", state: "jumping" });
+});
+
+window.addEventListener("bettergravity:tasks-updated", () => {
+  if (surface === null) return;
+  const next = activityOf();
+  activity = next.entries;
+  working = next.working;
+  signature = signatureOf(activity, working);
+  surface.send({ t: "activity", entries: activity, working });
+});
 
 /** Everything the pet sends back. */
 function fromSurface(message) {
@@ -6975,13 +7144,20 @@ function fromSurface(message) {
       break;
     }
     case "poke": {
-      focusComposer();
+      surface?.send({ t: "cheer", state: "jumping" });
+      if (surface?.where !== "desktop" && message?.surfaceWhere !== "desktop") {
+        focusComposer();
+      }
       break;
     }
     case "open": {
       if (typeof message.key === "string") {
         raise();
-        openThread(message.key);
+        if (message.key.startsWith("task-focus-") || message.key.startsWith("task-checkin-") || message.key.startsWith("task-companion-")) {
+          openTaskCompanionChat();
+        } else {
+          openThread(message.key);
+        }
       }
       break;
     }
@@ -7000,7 +7176,11 @@ function fromSurface(message) {
           if (typeof message.requestId !== "string" || destination === null || destination !== surface) return;
           destination.send({ t: "reply-result", key: message.key, requestId: message.requestId, ok });
         };
-        void askThread(message.key, message.text).then((ok) => respond(ok === true), () => respond(false));
+        const petName = selectedPet?.displayName || (selectedPetId ? selectedPetId.charAt(0).toUpperCase() + selectedPetId.slice(1) : "Pet");
+        const formattedText = message.key == null && !message.text.startsWith("[")
+          ? `[Task Companion: ${petName}] ${message.text}`
+          : message.text;
+        void askThread(message.key, formattedText).then((ok) => respond(ok === true), () => respond(false));
       }
       break;
     }

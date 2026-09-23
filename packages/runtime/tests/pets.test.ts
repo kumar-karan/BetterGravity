@@ -681,6 +681,16 @@ describe("Pets conversation controls", () => {
     expect(sent).toEqual([]);
   });
 
+  it("does not steal focus or call window.focus on poke when surface is desktop", () => {
+    const field = document.querySelector<HTMLTextAreaElement>("main textarea")!;
+    field.value = "Keep this draft";
+    pet.fromSurface({ t: "poke", surfaceWhere: "desktop" });
+    expect(window.focus).not.toHaveBeenCalled();
+    expect(document.activeElement).not.toBe(field);
+    expect(location.pathname).toBe("/c/previous");
+    expect(field.value).toBe("Keep this draft");
+  });
+
   it("opens the particular chat selected from a task card", async () => {
     addThread("selected", 120);
     addThread("unrelated", 120);

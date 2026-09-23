@@ -1,0 +1,11 @@
+{
+  "name": "Tasks",
+  "description": "A dedicated TODO & task tracker with an interactive Willow-styled sidebar dashboard, real-time checklist tracking, priorities, and a dedicated AI planning chat.",
+  "version": "1.0.0",
+  "author": "Yashjit Pal",
+  "main": "index.js",
+  "styles": [
+    "styles/tasks.css"
+  ],
+  "source": "https://github.com/YashjitPal/BetterGravity"
+}
