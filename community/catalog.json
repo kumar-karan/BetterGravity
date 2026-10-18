@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-18T17:28:39.949Z",
+  "generatedAt": "2026-10-18T17:46:59.449Z",
   "entries": [
     {
       "id": "catppuccin-accent",
@@ -369,12 +369,12 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/fork-chat",
-      "bytes": 72984,
+      "bytes": 73880,
       "files": [
         {
           "name": "index.js",
-          "bytes": 56899,
-          "sha256": "eec5a8782ea90cdce8d807a1374d7129c2bea1c077ed35680a477cea86681b2a"
+          "bytes": 57795,
+          "sha256": "2435a2ffff504a3ff13007bbef400b7bb3e13c3c0086c0f0874963de511a3a19"
         },
         {
           "name": "plugin.json",
@@ -425,7 +425,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/gemini-app",
-      "bytes": 950654,
+      "bytes": 951946,
       "files": [
         {
           "name": "assets/antigravity-mark.png",
@@ -444,8 +444,8 @@
         },
         {
           "name": "index.js",
-          "bytes": 387886,
-          "sha256": "72946c3055113548d325f29eb4187e755d76b79ac2d21550d5c199b41f6f7187"
+          "bytes": 388685,
+          "sha256": "671d9917eb5bbec4a2ebc6416710c82343bfd3853ece66f3ee76a2fa6cc080f3"
         },
         {
           "name": "plugin.json",
@@ -509,8 +509,8 @@
         },
         {
           "name": "styles/sidebar.css",
-          "bytes": 130920,
-          "sha256": "942dffc999da084e4793af893a7b11464a30ac29f42f54da7747d2a661a207f1"
+          "bytes": 131413,
+          "sha256": "d83c785dd20a1c5283aca648879c482ce4eed61aa7061842b66d7f057fd71d1a"
         },
         {
           "name": "styles/skills-tab.css",
@@ -584,6 +584,34 @@
           "name": "styles/gemini-live.css",
           "bytes": 18981,
           "sha256": "5505f4ba3a691b97ecf6858aac19598a6dbdf92dc97f29a8a3d563dc5094e8ac"
+        }
+      ]
+    },
+    {
+      "id": "gemini-ui",
+      "kind": "plugin",
+      "name": "Gemini Web UI",
+      "description": "Embedded Gemini Web UI and Argon manager with live daemon health, route toggles, cookie authentication, warmup latency, and benchmark tooling.",
+      "version": "1.0.0",
+      "author": "Yashjit Pal",
+      "source": "https://github.com/kumar-karan/BetterGravity",
+      "path": "community/plugins/gemini-ui",
+      "bytes": 28501,
+      "files": [
+        {
+          "name": "index.js",
+          "bytes": 21267,
+          "sha256": "a4b08ecb494be087e5afdb2a5ee68d54f6ac9d76d40f8f0b7b583c809a62cbd5"
+        },
+        {
+          "name": "plugin.json",
+          "bytes": 378,
+          "sha256": "f410004f017112f346a4274141e2ec11449b5f8c923e390f21a0d2313c90c3ae"
+        },
+        {
+          "name": "styles/gemini-ui.css",
+          "bytes": 6856,
+          "sha256": "2bcc23922e254d6187596a6dadc23abb8c838bffb29f657d08e9751427604548"
         }
       ]
     },

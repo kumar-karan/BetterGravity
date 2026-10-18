@@ -172,6 +172,12 @@ describe("choosing from what the key serves", () => {
     expect(bestPublicModel("3.9", "pro", available)).toEqual({ id: "gemini-3.1-pro-preview", downgraded: true });
   });
 
+  it("resolves gemini-4-argon when available in the pro family", () => {
+    const argonPool = new Set(["gemini-4-argon"]);
+    expect(bestPublicModel("4", "pro", argonPool)).toEqual({ id: "gemini-4-argon", downgraded: false });
+    expect(bestPublicModel("3.1", "pro", argonPool)).toEqual({ id: "gemini-4-argon", downgraded: false });
+  });
+
   it("has nothing to offer when the family is absent or unknown", () => {
     expect(bestPublicModel("3.5", "flash", new Set())).toBeUndefined();
     expect(bestPublicModel(undefined, "flash", available)).toBeUndefined();

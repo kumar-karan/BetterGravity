@@ -247,7 +247,7 @@ export function parseFamily(alias: string, display: string, modelEnum = ""): Fam
     if (source.includes("flash lite") || source.includes("flash-lite")) {
       return { version, family: "flash-lite" };
     }
-    if (source.includes("pro")) return { version, family: "pro" };
+    if (source.includes("pro") || source.includes("argon")) return { version: version ?? "4", family: "pro" };
     if (source.includes("flash")) return { version, family: "flash" };
   }
   return undefined;
@@ -282,7 +282,7 @@ function candidatesFor(family: ModelFamily, available: ReadonlySet<string>): rea
     if (SPECIALTY_MARKERS.some((marker) => id.includes(marker))) continue;
     if (family === "flash-lite" && !id.includes("flash-lite")) continue;
     if (family === "flash" && (!id.includes("flash") || id.includes("flash-lite"))) continue;
-    if (family === "pro" && !id.includes("pro")) continue;
+    if (family === "pro" && !id.includes("pro") && !id.includes("argon")) continue;
     const stated = /^gemini-(\d+(?:\.\d+)?)/.exec(id);
     if (!stated) continue;
     found.push({ id, version: versionTuple(stated[1] ?? ""), preview: id.includes("-preview") });
@@ -322,9 +322,15 @@ export function bestPublicModel(
   }
 
   const lower = candidates.filter((candidate) => compareVersions(candidate.version, wanted) < 0);
-  if (lower.length === 0) return undefined;
-  lower.sort((left, right) => compareVersions(right.version, left.version) || Number(left.preview) - Number(right.preview));
-  return { id: lower[0]?.id ?? "", downgraded: true };
+  if (lower.length > 0) {
+    lower.sort((left, right) => compareVersions(right.version, left.version) || Number(left.preview) - Number(right.preview));
+    return { id: lower[0]?.id ?? "", downgraded: true };
+  }
+
+  const argon = candidates.find((candidate) => candidate.id.includes("argon"));
+  if (argon) return { id: argon.id, downgraded: false };
+
+  return undefined;
 }
 
 /**
