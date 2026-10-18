@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-02T09:57:35.203Z",
+  "generatedAt": "2026-10-18T17:23:55.931Z",
   "entries": [
     {
       "id": "catppuccin-accent",
@@ -313,6 +313,54 @@
       ]
     },
     {
+      "id": "flow-studio",
+      "kind": "plugin",
+      "name": "Flow Studio",
+      "description": "Generate images and videos using Google Flow directly from the Antigravity sidebar. Select models (nano2, nano-pro, image4), aspect ratios, apply style presets, and browse your generation history.",
+      "version": "1.0.0",
+      "author": "Karan Kumar",
+      "source": "https://github.com/kumar-karan",
+      "path": "community/plugins/flow-studio",
+      "bytes": 944844,
+      "files": [
+        {
+          "name": "assets/logo.png",
+          "bytes": 95856,
+          "sha256": "194ccb5f8e5a8b88df2e6d806c6ed07520e01793a5507c39d25815b18d8e9129"
+        },
+        {
+          "name": "assets/neon_cube.jpg",
+          "bytes": 127412,
+          "sha256": "5ec15d507ebcd85e28f4c3a97291d011360b3b7cec56adfbea2a20e9bbe6eb75"
+        },
+        {
+          "name": "assets/prof_chonks_idle.gif",
+          "bytes": 96956,
+          "sha256": "4104fd88b7f42b08851c8341d0607ecc2f92adb7ce21c8e6fc51998611bfd248"
+        },
+        {
+          "name": "assets/prof_chonks.png",
+          "bytes": 586405,
+          "sha256": "2a0146a4cd2e8ff6398695d6065095b0932ada4b9c9f5c99aaf91d0a23c8f790"
+        },
+        {
+          "name": "index.js",
+          "bytes": 21705,
+          "sha256": "e510c5ffd32033a89fe4b468855ceb2318532b91740841d1018329d6cb004d9b"
+        },
+        {
+          "name": "plugin.json",
+          "bytes": 400,
+          "sha256": "b280554659681b37d56eeef844c8d65869bc8a4b25c9c9647600b6d962c27cbf"
+        },
+        {
+          "name": "styles/flow-studio.css",
+          "bytes": 16110,
+          "sha256": "15c752d93b1fdcb9d3c7bc616ab8ceeca9c5744ad50339dc85700153381f7418"
+        }
+      ]
+    },
+    {
       "id": "fork-chat",
       "kind": "plugin",
       "name": "Fork Chat",
@@ -321,12 +369,12 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/fork-chat",
-      "bytes": 71859,
+      "bytes": 72984,
       "files": [
         {
           "name": "index.js",
-          "bytes": 57556,
-          "sha256": "b0f727ab4d97b032c8cb7f6aa79e3c2329fed230d399f22159e68bef33c7df39"
+          "bytes": 56899,
+          "sha256": "eec5a8782ea90cdce8d807a1374d7129c2bea1c077ed35680a477cea86681b2a"
         },
         {
           "name": "plugin.json",
@@ -340,8 +388,8 @@
         },
         {
           "name": "styles/fork.css",
-          "bytes": 12205,
-          "sha256": "6ac2d9f2e93e5aa32dfd7e53161cdf861dab7896c21cf5c4ca15e4af25a0c31e"
+          "bytes": 13987,
+          "sha256": "a4ce69a2f61868e43a0ed4998c500464a8ab20144ad55c8eaf868e25ffb2f46c"
         }
       ]
     },
@@ -377,7 +425,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/gemini-app",
-      "bytes": 951578,
+      "bytes": 950654,
       "files": [
         {
           "name": "assets/antigravity-mark.png",
@@ -396,8 +444,8 @@
         },
         {
           "name": "index.js",
-          "bytes": 388123,
-          "sha256": "f0d9d6187e94adf5baf293183ea4a016d92021e8e282c490516ebc84083f5ed1"
+          "bytes": 387886,
+          "sha256": "72946c3055113548d325f29eb4187e755d76b79ac2d21550d5c199b41f6f7187"
         },
         {
           "name": "plugin.json",
@@ -406,8 +454,8 @@
         },
         {
           "name": "styles/conversation.css",
-          "bytes": 75789,
-          "sha256": "1abb6d1b6bdb8bc326ebac73a5e3c4d66f68638f1c03cc3818e91d4ecfdbe7a3"
+          "bytes": 75595,
+          "sha256": "2bb706679e0085fa8b82cba2ee7814bef3ee3a8409e1fc74635dee5c285f00da"
         },
         {
           "name": "styles/dialog.css",
@@ -461,8 +509,8 @@
         },
         {
           "name": "styles/sidebar.css",
-          "bytes": 131413,
-          "sha256": "d83c785dd20a1c5283aca648879c482ce4eed61aa7061842b66d7f057fd71d1a"
+          "bytes": 130920,
+          "sha256": "942dffc999da084e4793af893a7b11464a30ac29f42f54da7747d2a661a207f1"
         },
         {
           "name": "styles/skills-tab.css",
@@ -826,17 +874,42 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/YashjitPal/BetterGravity",
       "path": "community/plugins/pets",
-      "bytes": 1507945,
+      "bytes": 2729330,
       "files": [
         {
+          "name": "assets/rocky_halo.webp",
+          "bytes": 372042,
+          "sha256": "d9959b58d98dc0fccd9c9c87709d118b9074b38af34bdf672e053d1c32f65042"
+        },
+        {
+          "name": "assets/rocky_pumpkin.webp",
+          "bytes": 376234,
+          "sha256": "ce01ca399335e61e2b30251c45f3a59e278add341eb13a59a4236293f318d646"
+        },
+        {
+          "name": "assets/rocky_puppy.webp",
+          "bytes": 333814,
+          "sha256": "b9a935e5b88c15bd32535e687cef7e97eb4abe284e2b21f749b7a6e991cff317"
+        },
+        {
+          "name": "assets/rocky_santa.webp",
+          "bytes": 356062,
+          "sha256": "cd31f1598a3366472e1dd9f5aec359d71c02ca2c91ad7c2b0870e7902c9c6ccd"
+        },
+        {
+          "name": "assets/rocky_sword.webp",
+          "bytes": 347206,
+          "sha256": "760bf55b5edbb72c5ef32f1c8d3b5a1ce49b83ed7c2a2d272808b56403e04050"
+        },
+        {
           "name": "assets/rocky.webp",
-          "bytes": 978516,
-          "sha256": "81970d728fb0a024385298c47dd9128ee18e9eb9d1db84ccacd42edea9f3bd6a"
+          "bytes": 338040,
+          "sha256": "86a4eb0009ec5c75e0134d13ac03acd8810e928c1926a6b11de28c10580efdbe"
         },
         {
           "name": "index.js",
-          "bytes": 260353,
-          "sha256": "5c7d52c637fcf6ea3ebcd659d6ea8bb0ded71b68d4ccc8dd812e686c12d76f13"
+          "bytes": 324986,
+          "sha256": "4f3e383dbd7b2ab7a4eb4c6a2fcb04206fcc84529038ca98e673080b1119827b"
         },
         {
           "name": "plugin.json",
@@ -970,18 +1043,56 @@
         },
         {
           "name": "styles/hud.css",
-          "bytes": 42099,
-          "sha256": "610f7b7405a2a8284de38e5583f3f7a3ee43e7e4fbd20f0205ad242a1cb4f670"
+          "bytes": 44250,
+          "sha256": "8c13423990937218a1312588333cf136e9d8f656a20df8679a5b6fb0e57754ca"
         },
         {
           "name": "styles/library.css",
-          "bytes": 19123,
-          "sha256": "1d0a3761fa383288c886155b855f0744f62e7d0883d3d480abf4bc2d5e5581c0"
+          "bytes": 25672,
+          "sha256": "e759e8ee0a6440bd7c001545950baa6eee2fb8fee26f318d4bcc27960a33ea60"
         },
         {
           "name": "styles/pet.css",
-          "bytes": 4024,
-          "sha256": "5623f9391aa7467dd293563e942e59e59e8887ddfd572eeccdfddd1ac066c68d"
+          "bytes": 7194,
+          "sha256": "0131c766df1636909c1b3a237903f83d6500035242309007053909ffdd65720a"
+        }
+      ]
+    },
+    {
+      "id": "tasks",
+      "kind": "plugin",
+      "name": "Tasks",
+      "description": "A dedicated TODO & task tracker with an interactive Willow-styled sidebar dashboard, real-time checklist tracking, priorities, and a dedicated AI planning chat.",
+      "version": "1.0.0",
+      "author": "Yashjit Pal",
+      "source": "https://github.com/YashjitPal/BetterGravity",
+      "path": "community/plugins/tasks",
+      "bytes": 43159,
+      "files": [
+        {
+          "name": "index.js",
+          "bytes": 20694,
+          "sha256": "248fe89720dc6edb0a4d8f7b1ee3158997f1725a560b7fda9d5e2942a9ab42a3"
+        },
+        {
+          "name": "plugin.json",
+          "bytes": 375,
+          "sha256": "13fe87c76b788547997d97eb85c7208646c43049759f34a4c44878b6d3f40d8e"
+        },
+        {
+          "name": "skills/task-tracker/scripts/task_bridge.py",
+          "bytes": 8763,
+          "sha256": "d6ed030d97bc55db1c85ff15221c1070bee6fe04a5c6a72ef3eb72c7a6b37b03"
+        },
+        {
+          "name": "skills/task-tracker/SKILL.md",
+          "bytes": 2874,
+          "sha256": "cb9480e174f88a3f762b22cde75aa017c0b57d9909774451c099d1f765aa78c5"
+        },
+        {
+          "name": "styles/tasks.css",
+          "bytes": 10453,
+          "sha256": "6d68decc6a3681799b6ee0874dfb98eec23c9ba238aad6edf1116d32f132b02b"
         }
       ]
     },

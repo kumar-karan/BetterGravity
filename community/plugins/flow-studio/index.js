@@ -20,6 +20,9 @@ const buttonHandle = plugin.ui.button({
   tooltip: "Google Flow Creative Studio",
   onClick: () => { if (page) closePage(); else openPage(); }
 });
+if (buttonHandle.element) {
+  buttonHandle.element.id = "bettergravity-flow-studio-button";
+}
 plugin.onDispose(() => buttonHandle.remove());
 
 // Settings panel definition
@@ -58,6 +61,25 @@ if (!plugin.storage.get("recentPrompts")) {
   plugin.storage.set("recentPrompts", []);
 }
 
+// Asset Resolver: maps logical asset keys to bundled CSS variables
+const ASSET_VARS = {
+  "neon_cube": "--flow-asset-neon-cube",
+  "prof_chonks": "--flow-asset-prof-chonks",
+  "prof_chonks_idle": "--flow-asset-prof-chonks-idle"
+};
+
+function resolveAssetUrl(key) {
+  if (!key) return "";
+  const cssVar = ASSET_VARS[key];
+  if (cssVar && typeof document !== "undefined") {
+    const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+    const match = raw.match(/^url\(["']?(.*?)["']?\)$/);
+    if (match && match[1]) return match[1];
+    if (raw.startsWith("data:")) return raw;
+  }
+  return key;
+}
+
 // State variables
 let page = null;
 let pageRoot = null;
@@ -70,7 +92,7 @@ const hiddenChildren = new Map();
 let currentModel = settings?.model || "nano2";
 let currentAspect = settings?.aspect || "1:1";
 let currentPrompt = "A sleek futuristic glowing neon prism cube icon floating on dark background, octane render 8k";
-let currentPreviewImg = "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/neon_cube.jpg";
+let currentPreviewAsset = "neon_cube";
 
 // Option 4 Model Cards Data
 const models = [
@@ -116,25 +138,25 @@ const inspirationPrompts = [
     prompt: "A cute chubby fat orange cat with round wire glasses and a small cozy green beret sitting at a miniature wooden desk reading an ancient spellbook, 3d render",
     model: "nano2",
     aspect: "1:1",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/prof_chonks.png"
+    asset: "prof_chonks"
   },
   {
     prompt: "A sleek futuristic glowing neon prism cube floating on dark background, octane render 8k",
     model: "nano2",
     aspect: "1:1",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/neon_cube.jpg"
+    asset: "neon_cube"
   },
   {
     prompt: "6 full-body frames subtle breathing and blinking resting animation loop for cat companion, horizontal animation strip",
     model: "nano2",
     aspect: "16:9",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/prof_chonks_idle.gif"
+    asset: "prof_chonks_idle"
   },
   {
     prompt: "Cinematic macro shot of a bioluminescent glass frog with glowing constellations resting on a wet jungle leaf, 85mm f/1.4",
     model: "image4",
     aspect: "9:16",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/neon_cube.jpg"
+    asset: "neon_cube"
   }
 ];
 
@@ -145,21 +167,21 @@ const defaultCreations = [
     prompt: "A sleek futuristic glowing neon prism cube icon floating on dark background, octane render 8k",
     model: "nano2",
     aspect: "1:1",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/neon_cube.jpg"
+    asset: "neon_cube"
   },
   {
     title: "Professor Chonks (Idle Loop)",
     prompt: "6 full-body frames subtle breathing and blinking resting animation loop, horizontal strip",
     model: "nano2",
     aspect: "16:9",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/prof_chonks_idle.gif"
+    asset: "prof_chonks_idle"
   },
   {
     title: "Professor Chonks (Base Mascot)",
     prompt: "A delightfully cute chubby round fat cat scholar sticker mascot wearing cute round glasses and a small cozy beret hat",
     model: "nano2",
     aspect: "1:1",
-    img: "file:///Users/karankumar/Library/Application Support/BetterGravity/plugins/flow-studio/assets/prof_chonks.png"
+    asset: "prof_chonks"
   }
 ];
 
@@ -168,18 +190,18 @@ const VIEW = '[data-testid="conversation-view"]';
 // Find the main chat/editor viewport (NOT sidebar)
 function findViewport() {
   const conversation = document.querySelector(VIEW);
-  if (conversation) {
+  if (conversation && !conversation.closest('[role="navigation"], [aria-label="Sidebar"]')) {
     return conversation.parentElement === document.body ? conversation : conversation.parentElement;
   }
-  const cascade = document.querySelector('[data-cascade-id]');
-  if (cascade) {
-    return cascade.parentElement === document.body ? cascade : cascade.parentElement;
+  const flexMain = document.querySelector('.flex-1.flex.flex-col.min-w-0.h-full');
+  if (flexMain) {
+    const vp = flexMain.querySelector('.flex-1.min-h-0') ?? flexMain.children[1];
+    if (vp && !vp.closest('[role="navigation"], [aria-label="Sidebar"]')) return vp;
+    return flexMain;
   }
-  const main = document.querySelector('.flex-1.flex.flex-col.min-w-0.h-full');
-  if (main) {
-    return main.querySelector('.flex-1.min-h-0') ?? main.children[1] ?? main;
-  }
-  return document.querySelector('main, [role="main"]') ?? document.body;
+  const roleMain = document.querySelector('main, [role="main"]');
+  if (roleMain && !roleMain.closest('[role="navigation"], [aria-label="Sidebar"]')) return roleMain;
+  return null;
 }
 
 // Hide siblings when Flow Studio is open
@@ -218,6 +240,7 @@ function closePage() {
   pageViewport = null;
   document.body.classList.remove('bettergravity-flow-studio-open');
   buttonHandle.setActive(false);
+  buttonHandle.element?.classList.remove('bg-sidebar-secondary');
 }
 
 // Open page & mount
@@ -247,7 +270,7 @@ function openPage() {
   }
 
   const viewport = findViewport();
-  if (!viewport || viewport === document.body) return;
+  if (!viewport || viewport === document.body || viewport.closest('[role="navigation"], [aria-label="Sidebar"]')) return;
   closePage();
   window.BetterGravity?.panel?.close();
   pageViewport = viewport;
@@ -265,6 +288,10 @@ function openPage() {
   pageViewportObserver.observe(pageViewport, { childList: true });
   document.body.classList.add('bettergravity-flow-studio-open');
   buttonHandle.setActive(true);
+  if (buttonHandle.element) {
+    buttonHandle.element.id = 'bettergravity-flow-studio-button';
+    buttonHandle.element.classList.add('bg-sidebar-secondary');
+  }
 
   // Sync state defaults
   currentModel = settings?.model || "nano2";
@@ -285,7 +312,7 @@ function el(tag, className, text) {
 // Generate the ready-to-run gflow command
 function getCommandString() {
   const p = currentPrompt.trim() ? currentPrompt.replace(/"/g, '\\"') : "A sleek glowing icon";
-  return `/Users/karankumar/.local/bin/gflow image t2i --model ${currentModel} --aspect ${currentAspect} "${p}"`;
+  return `gflow image t2i --model ${currentModel} --aspect ${currentAspect} "${p}"`;
 }
 
 // Option 4: Split Workstation Pro Renderer
@@ -339,7 +366,7 @@ function renderPage() {
     currentPrompt = item.prompt;
     currentModel = item.model;
     currentAspect = item.aspect;
-    currentPreviewImg = item.img;
+    currentPreviewAsset = item.asset;
     renderPage();
   };
 
@@ -458,7 +485,7 @@ function renderPage() {
   frame.style.height = activeAspectObj.height;
 
   const img = el('img');
-  img.src = currentPreviewImg;
+  img.src = resolveAssetUrl(currentPreviewAsset);
   img.alt = 'Generation Preview';
 
   const badge = el('div', 'flow-studio__badge', `${currentModel.toUpperCase()} • ${currentAspect}`);
@@ -490,7 +517,7 @@ function renderPage() {
 
     const thumb = el('div', 'flow-studio__thumbnail');
     const thumbImg = el('img');
-    thumbImg.src = item.img;
+    thumbImg.src = resolveAssetUrl(item.asset);
     thumbImg.alt = item.title;
     thumb.append(thumbImg);
 
@@ -503,7 +530,7 @@ function renderPage() {
       currentPrompt = item.prompt;
       currentModel = item.model;
       currentAspect = item.aspect;
-      currentPreviewImg = item.img;
+      currentPreviewAsset = item.asset;
       renderPage();
     };
 
@@ -521,17 +548,37 @@ const leaveOnClick = event => {
   if (!page) return;
   const target = event.target;
   if (!(target instanceof Element) || target.closest('#bettergravity-flow-studio-view, [data-bettergravity-button="Flow Studio"]')) return;
-  if (target.closest('a[href*="/c/"], [role="navigation"] a, [role="navigation"] button:not([data-bettergravity-button="Flow Studio"]), [data-bettergravity-button="Pets"], [data-testid="history-button"], [data-testid="new-chat-button"]')) {
+  if (target.closest(
+    'a[href*="/c/"], ' +
+    '[role="navigation"] a, ' +
+    '[role="navigation"] button:not([data-bettergravity-button="Flow Studio"]), ' +
+    '[data-bettergravity-button]:not([data-bettergravity-button="Flow Studio"]), ' +
+    '[data-testid="new-conversation-button"], ' +
+    '[data-testid="history-button"], ' +
+    '[data-testid="automations-button"], ' +
+    '[data-cascade-id], ' +
+    '[data-testid="conversation-row-sidebar"], ' +
+    '#gemini-skills-button, ' +
+    '#gemini-scheduled-tasks-button'
+  )) {
+    closePage();
+  }
+};
+
+const leaveOnKey = event => {
+  if (event.key === "Escape" && page) {
     closePage();
   }
 };
 
 document.addEventListener('click', leaveOnClick, true);
+document.addEventListener('keydown', leaveOnKey, true);
 window.addEventListener('popstate', closePage);
 window.addEventListener('hashchange', closePage);
 
 plugin.onDispose(() => {
   document.removeEventListener('click', leaveOnClick, true);
+  document.removeEventListener('keydown', leaveOnKey, true);
   window.removeEventListener('popstate', closePage);
   window.removeEventListener('hashchange', closePage);
 });

@@ -4,6 +4,12 @@
  * Strictly following native Antigravity theme & design tokens
  * =========================================================================== */
 
+:root {
+  --flow-asset-neon-cube: url("../assets/neon_cube.jpg");
+  --flow-asset-prof-chonks: url("../assets/prof_chonks.png");
+  --flow-asset-prof-chonks-idle: url("../assets/prof_chonks_idle.gif");
+}
+
 /* ---------------------------------------------------------------------------
  * 1. Viewport Positioning & Sibling Masking
  * ------------------------------------------------------------------------- */
@@ -121,58 +127,6 @@
 }
 
 /* ---------------------------------------------------------------------------
- * Outline-Free Consistency across all sidebar action buttons
- * Removes hard borders and applies matching stealth ghost treatments
- * ------------------------------------------------------------------------- */
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"],
-[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button,
-[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"],
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"] {
-  border: none !important;
-  box-shadow: none !important;
-  border-radius: 9999px !important;
-  margin: 1px 0 !important;
-  box-sizing: border-box !important;
-  color: var(--gemini-text-dim, #9aa0a6) !important;
-  transition: background-color 140ms ease, color 140ms ease !important;
-}
-
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"] > svg,
-[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button > svg,
-[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"] > svg,
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"] > svg {
-  color: #80868b !important;
-}
-
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"]:hover,
-[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button:hover,
-[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"]:hover,
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"]:hover {
-  background: var(--bettergravity-row-hover, var(--gemini-row-hover, rgba(255, 255, 255, 0.08))) !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"]:hover > svg,
-[role="navigation"][aria-label="Sidebar"] #gemini-scheduled-tasks-button:hover > svg,
-[role="navigation"][aria-label="Sidebar"] [data-testid="automations-button"]:hover > svg,
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"]:hover > svg {
-  color: #ffffff !important;
-}
-
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"][aria-pressed="true"],
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"][aria-pressed="true"] {
-  background: #333537 !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-[role="navigation"][aria-label="Sidebar"] [data-testid="history-button"][aria-pressed="true"] > svg,
-[role="navigation"][aria-label="Sidebar"] [data-bettergravity-button="Pets"][aria-pressed="true"] > svg {
-  color: #ffffff !important;
-}
-
-/* ---------------------------------------------------------------------------
  * 3. Main Studio Viewport (Native Antigravity Surface)
  * ------------------------------------------------------------------------- */
 .bettergravity-flow-studio-page,
@@ -211,9 +165,12 @@
  * ------------------------------------------------------------------------- */
 .flow-studio__header {
   margin-bottom: 8px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-.flow-studio__header h1 {
+.flow-studio__header h1,
+#bettergravity-flow-studio-title {
   margin: 0;
   padding: 4px 8px 4px 16px;
   color: #e3e3e3;
@@ -221,7 +178,18 @@
   font-weight: 350;
   font-variation-settings: "ROND" 20, "slnt" 0, "wdth" 100, "wght" 350;
   line-height: 36px;
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.flow-studio__header h1:focus,
+.flow-studio__header h1:focus-visible,
+#bettergravity-flow-studio-title:focus,
+#bettergravity-flow-studio-title:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .flow-studio__header p {

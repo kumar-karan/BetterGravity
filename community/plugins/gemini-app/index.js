@@ -2087,7 +2087,12 @@ function getActiveCustomView() {
           child.isConnected &&
           child.style.display !== 'none') {
         const btnId = child.id.replace(/-view$|-page$/, '-button');
-        return { id: child.id, buttonId: btnId, buttonSelector: `[data-bettergravity-button], #${btnId}` };
+        const pluginName = child.id.replace(/^bettergravity-/, '').replace(/-view$|-page$/, '').replace(/-/g, ' ');
+        return {
+          id: child.id,
+          buttonId: btnId,
+          buttonSelector: `[data-bettergravity-button="${pluginName}" i], [data-bettergravity-button="${child.id}" i], #${btnId}`
+        };
       }
     }
   }
@@ -2188,7 +2193,10 @@ function closeOpenCustomViews(exceptTarget) {
           child.id !== 'bettergravity-pets-view') {
         if (!exceptTarget || !exceptTarget.closest(`#${CSS.escape(child.id)}`)) {
           const btnId = child.id.replace(/-view$|-page$/, '-button');
-          const btn = document.getElementById(btnId) || document.querySelector(`[data-bettergravity-button]`);
+          const pluginName = child.id.replace(/^bettergravity-/, '').replace(/-view$|-page$/, '').replace(/-/g, ' ');
+          const btn = document.getElementById(btnId) ||
+            document.querySelector(`[data-bettergravity-button="${pluginName}" i]`) ||
+            document.querySelector(`[data-bettergravity-button="${child.id}" i]`);
           if (btn && btn.getAttribute('aria-pressed') === 'true') {
             btn.click();
           } else {
@@ -2668,6 +2676,7 @@ listenToPage(document, 'click', (e) => {
     target.closest('#gemini-skills-view') ||
     target.closest('#gemini-skills-button') ||
     target.closest('#bettergravity-pets-view') ||
+    target.closest('#bettergravity-flow-studio-view') ||
     target.closest('.spark-row-action-menu__popover') ||
     target.closest('.spark-upload-dialog-backdrop')
   ) {
