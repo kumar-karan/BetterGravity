@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-18T17:46:59.449Z",
+  "generatedAt": "2026-10-18T17:48:47.489Z",
   "entries": [
     {
       "id": "catppuccin-accent",
@@ -596,7 +596,7 @@
       "author": "Yashjit Pal",
       "source": "https://github.com/kumar-karan/BetterGravity",
       "path": "community/plugins/gemini-ui",
-      "bytes": 28501,
+      "bytes": 34771,
       "files": [
         {
           "name": "index.js",
@@ -607,6 +607,16 @@
           "name": "plugin.json",
           "bytes": 378,
           "sha256": "f410004f017112f346a4274141e2ec11449b5f8c923e390f21a0d2313c90c3ae"
+        },
+        {
+          "name": "skills/argon-brain/scripts/ask_argon.py",
+          "bytes": 4330,
+          "sha256": "d72f33069c7fd3d8a9f7d01f42894bc42fbaded6b2f94de7a55d28b99ff3161c"
+        },
+        {
+          "name": "skills/argon-brain/SKILL.md",
+          "bytes": 1940,
+          "sha256": "2fb0769d2140885b1204ab08ca70e90f1a4599ec77fb5af22ed3d83da188cd75"
         },
         {
           "name": "styles/gemini-ui.css",
