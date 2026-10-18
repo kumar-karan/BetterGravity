@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-18T17:23:55.931Z",
+  "generatedAt": "2026-10-18T17:28:39.949Z",
   "entries": [
     {
       "id": "catppuccin-accent",
@@ -1055,44 +1055,6 @@
           "name": "styles/pet.css",
           "bytes": 7194,
           "sha256": "0131c766df1636909c1b3a237903f83d6500035242309007053909ffdd65720a"
-        }
-      ]
-    },
-    {
-      "id": "tasks",
-      "kind": "plugin",
-      "name": "Tasks",
-      "description": "A dedicated TODO & task tracker with an interactive Willow-styled sidebar dashboard, real-time checklist tracking, priorities, and a dedicated AI planning chat.",
-      "version": "1.0.0",
-      "author": "Yashjit Pal",
-      "source": "https://github.com/YashjitPal/BetterGravity",
-      "path": "community/plugins/tasks",
-      "bytes": 43159,
-      "files": [
-        {
-          "name": "index.js",
-          "bytes": 20694,
-          "sha256": "248fe89720dc6edb0a4d8f7b1ee3158997f1725a560b7fda9d5e2942a9ab42a3"
-        },
-        {
-          "name": "plugin.json",
-          "bytes": 375,
-          "sha256": "13fe87c76b788547997d97eb85c7208646c43049759f34a4c44878b6d3f40d8e"
-        },
-        {
-          "name": "skills/task-tracker/scripts/task_bridge.py",
-          "bytes": 8763,
-          "sha256": "d6ed030d97bc55db1c85ff15221c1070bee6fe04a5c6a72ef3eb72c7a6b37b03"
-        },
-        {
-          "name": "skills/task-tracker/SKILL.md",
-          "bytes": 2874,
-          "sha256": "cb9480e174f88a3f762b22cde75aa017c0b57d9909774451c099d1f765aa78c5"
-        },
-        {
-          "name": "styles/tasks.css",
-          "bytes": 10453,
-          "sha256": "6d68decc6a3681799b6ee0874dfb98eec23c9ba238aad6edf1116d32f132b02b"
         }
       ]
     },
