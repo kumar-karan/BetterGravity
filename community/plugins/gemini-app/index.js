@@ -2677,7 +2677,6 @@ listenToPage(document, 'click', (e) => {
     target.closest('#gemini-skills-button') ||
     target.closest('#bettergravity-pets-view') ||
     target.closest('#bettergravity-flow-studio-view') ||
-    target.closest('#bettergravity-gemini-ui-view') ||
     target.closest('.spark-row-action-menu__popover') ||
     target.closest('.spark-upload-dialog-backdrop')
   ) {
